@@ -10,6 +10,30 @@ session_start();
 
 <body>
 <?php
+// get # of builds that currently exist for this user
+function select_num_builds($email) {
+  $servername = "localhost";
+  $username = "root";
+  $password = "password";
+  $dbname = "pcshowcase";
+
+  // Create connection
+  $conn = new mysqli($servername, $username, $password, $dbname);
+  // Check connection
+  if ($conn->connect_error) {
+      die("Connection failed: " . $conn->connect_error);
+  }
+
+  $sql = "SELECT num_builds FROM users WHERE email = '$email'";
+  $result = $conn->query($sql);
+
+  $num_builds = $result->fetch_assoc()["num_builds"];
+
+  $conn->close();
+
+  return $num_builds;
+}
+
 $servername = "localhost";
 $username = "root";
 $password = "password";
@@ -31,9 +55,9 @@ try {
   $conn->exec($sql);
 
   // decrement this user's num_builds
-  $user_id = $_SESSION["user_id"];
-  $num_builds = select_num_builds($user_id);
-  $sql = "UPDATE users SET num_builds=" . ($num_builds - 1) . " WHERE id=$user_id";
+  $email = $_SESSION["email"];
+  $num_builds = select_num_builds($email);
+  $sql = "UPDATE users SET num_builds=" . ($num_builds - 1) . " WHERE email='$email'";
   $stmt = $conn->prepare($sql);
   $stmt->execute();
 
@@ -44,30 +68,6 @@ try {
 }
 
 $conn = null;
-
-// get # of builds that currently exist for this user
-function select_num_builds($user_id) {
-  $servername = "localhost";
-  $username = "root";
-  $password = "password";
-  $dbname = "pcshowcase";
-
-  // Create connection
-  $conn = new mysqli($servername, $username, $password, $dbname);
-  // Check connection
-  if ($conn->connect_error) {
-      die("Connection failed: " . $conn->connect_error);
-  }
-
-  $sql = "SELECT num_builds FROM users WHERE id = '$user_id'";
-  $result = $conn->query($sql);
-
-  $num_builds = $result->fetch_assoc()["num_builds"];
-
-  $conn->close();
-
-  return $num_builds;
-}
 ?>
 </body>
 

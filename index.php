@@ -10,7 +10,7 @@ session_start();
 
 <body>
 <?php
-$user = $_SESSION["user_id"];
+$user = $_SESSION["email"];
 
 // if someone is logged in, link to builds page
 if ($user != null) {
@@ -25,7 +25,7 @@ if ($user != null) {
   echo "<input type='password' name='password'><br>";
   echo "<input type='submit' value='Login'>";
   echo "</form><br>";
-  echo "<a href='register.php'>Register</a> | <a href='reset_password.html'>Reset Password</a>";
+  echo "<a href='register.html'>Register</a> | <a href='reset_password.html'>Reset Password</a>";
 }
 ?>
 </body>

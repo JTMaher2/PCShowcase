@@ -23,12 +23,12 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$owner = $_SESSION["user_id"];
-$sql = "SELECT id, name FROM builds WHERE owner = $owner";
+$email = $_SESSION["email"];
+$sql = "SELECT id, name FROM builds WHERE owner = '$email'";
 $result = $conn->query($sql);
 
 // if user is logged in
-if ($owner != null) {
+if ($email != null) {
   echo "<a href='logout.php'>Logout</a><br><br>"; // logout link
 
   if ($result->num_rows > 0) {
@@ -36,25 +36,24 @@ if ($owner != null) {
       // output data of each row
       while($row = $result->fetch_assoc()) {
           echo "<tr><td><a href='display_build.php?build_id=" . $row["id"] .
-  "&name=" . $row["name"] . "'>" . $row["name"] . "</a></td>" .
-  "<td><form action='remove_build.php'>" .
-  "<input type='hidden' name='build_id' value='" . $row["id"] . "'>" .
-  "<input type='submit' value='X'>" .
-  "</form></td></tr>";
+               "'>" . $row["name"] . "</a></td>" .
+               "<td><form action='remove_build.php'>" .
+               "<input type='hidden' name='build_id' value='" . $row["id"] .
+               "'>" . "<input type='submit' value='X'>" . "</form></td></tr>";
       }
       echo "</table><br>";
   } else {
     echo "You do not have any builds.<br><br>";
   }
 
-  echo "<strong>New build:</strong>";
-  echo "<form action='new_build.php'>";
-  echo "Name: <input type='text' name='name'><br>";
-  echo "<input type='submit' value='Create'>";
-  echo "</form>";
+  echo "<strong>New build:</strong>
+        <form action='new_build.php'>
+        Name: <input type='text' name='name'><br>
+        <input type='submit' value='Create'>
+        </form>";
 } else {
-  echo "You are not logged in.<br>";
-  echo "<a href='index.php'>Home</a>";
+  echo "You are not logged in.<br>
+        <a href='index.php'>Home</a>";
 }
 
 $conn->close();

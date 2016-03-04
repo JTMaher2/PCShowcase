@@ -24,8 +24,8 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-$user_id = $_SESSION["user_id"];
-$sql = "SELECT num_builds FROM users WHERE id=$user_id";
+$email = $_SESSION["email"];
+$sql = "SELECT num_builds FROM users WHERE email='$email'";
 $result = $conn->query($sql);
 $num_builds = $result->fetch_assoc()["num_builds"];
 $conn->close();
@@ -36,7 +36,7 @@ try { // to increment # of builds
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   // update user's num_builds based on the retrieved value
-  $sql = "UPDATE users SET num_builds=" . ($num_builds + 1) . " WHERE id=$user_id";
+  $sql = "UPDATE users SET num_builds=" . ($num_builds + 1) . " WHERE email='$email'";
   $stmt = $conn->prepare($sql);
   $stmt->execute();
 }
@@ -49,22 +49,19 @@ try { // to add new record to builds table
   // set the PDO error mode to exception
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  $name = $_GET["name"];
-
-  $sql = "INSERT INTO builds (name, owner) VALUES (:name, :user_id)";
+  $sql = "INSERT INTO builds (name, owner) VALUES (:name, :email)";
 
   // use parameters to prevent SQL injection
   $stmt = $conn->prepare($sql);
-  $stmt->bindParam(':name', $name);
-  $stmt->bindParam(':user_id', $user_id);
+  $stmt->bindParam(':name', $_GET["name"]);
+  $stmt->bindParam(':email', $email);
   $stmt->execute();
 
   echo "New build created successfully<br>";
 
   $build_id = $conn->lastInsertId(); // get this build's ID
 
-  echo "<a href='display_build.php?build_id=" . $build_id .
-  "&name=" . $name . "'>Go to Build</a>";
+  echo "<a href='display_build.php?build_id=" . $build_id . "'>Go to Build</a>";
 }
 catch(PDOException $e) {
   echo $e->getMessage();

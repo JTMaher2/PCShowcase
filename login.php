@@ -34,12 +34,7 @@ if ($password != null) {
   $submitted_password = $_POST["password"];
 
   if (password_verify($submitted_password, $hashed_password)) {
-    // retrieve user's id
-    $id_sql = "SELECT id FROM users WHERE email = '$email'";
-    $id_result = $conn->query($id_sql);
-    $id = $id_result->fetch_assoc()["id"];
-
-    $_SESSION["user_id"] = $id; // use user's ID as session variable
+    $_SESSION["email"] = $email; // use user's email as session variable
 
     echo "You are now logged in.<br>";
     echo "<a href='builds.php'>View your builds.</a>";

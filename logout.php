@@ -11,15 +11,12 @@ session_start();
 <body>
 
 <?php
-  $user_id = $_SESSION["user_id"];
+  $email = $_SESSION["email"];
+  session_unset();
+  session_destroy();
 
-  if ($user_id != null) { // if user is logged in
-    session_unset();
-    session_destroy();
-    
-    echo "You are now logged out.<br>";
-    echo "<a href='index.php'>Home</a>";
-  }
+  echo "You are now logged out.<br>";
+  echo "<a href='index.php'>Home</a>";
 ?>
 
 </body>

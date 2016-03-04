@@ -47,12 +47,12 @@ if ($email_taken == 1) {
             register_user($servername, $username, $password, $dbname, $email, $user_password);
       } else {
         echo "Password must contain at least 1 letter, at least 1 number, and least 1 symbol<br>";
-        echo "<a href='register.php'>Back</a>";
+        echo "<a href='register.html'>Back</a>";
       }
     }
   } else { // password does not match confirm_password
     echo "Password and confirm password do not match<br>";
-    echo "<a href='register.php'>Back</a>";
+    echo "<a href='register.html'>Back</a>";
   }
 }
 
@@ -66,16 +66,14 @@ function register_user($servername, $username, $password, $dbname, $email, $user
       $hashed_user_password = password_hash($user_password, PASSWORD_DEFAULT);
 
       $sql = "INSERT INTO users (email, password)
-      VALUES ('$email', '$hashed_user_password')";
-      // use exec() because no results are returned
-      $conn->exec($sql);
+              VALUES ('$email', '$hashed_user_password')";
+      $conn->exec($sql); // use exec() because no results are returned
       echo "$email successfully registered<br>";
       echo "<a href='index.php'>Home</a>";
-      }
-  catch(PDOException $e)
-      {
+  }
+  catch(PDOException $e) {
       echo $sql . "<br>" . $e->getMessage();
-      }
+  }
 
   $conn = null;
 }
