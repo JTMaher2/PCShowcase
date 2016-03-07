@@ -10,6 +10,10 @@ session_start();
 <body>
 
 <?php
+if ($_SESSION["email"] != null) {
+  echo "<a href='logout.php'>Logout</a>"; // if logged in, display logout link
+}
+
 $servername = "localhost";
 $username = "root";
 $password = "password";
@@ -22,8 +26,8 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-$build_id = $_GET["build_id"];
-$sql = "SELECT name, owner FROM builds WHERE id = $build_id";
+$_SESSION["build_id"] = $_GET["build_id"];
+$sql = "SELECT name, owner FROM builds WHERE id = " . $_SESSION["build_id"];
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) { // build exists, so display it
@@ -34,17 +38,12 @@ if ($result->num_rows > 0) { // build exists, so display it
   echo "<h3>$build_name:</h3>";
 
   // select parts for this build
-  $sql = "SELECT id, type, name FROM parts WHERE build_id = $build_id";
+  $sql = "SELECT id, type, name FROM parts WHERE build_id = " . $_SESSION["build_id"];
   $result = $conn->query($sql);
 
   if ($result->num_rows > 0) { // if this build has parts
     echo "<table border='1' style='width:100%'>
-          <tr><th>Type</th><th>Name</th><th>Buy</th>";
-    // if current user is owner, allow part deletion
-    if ($owner == $_SESSION["email"]) {
-      echo "<th>Remove</th>";
-    }
-    echo "</tr>";
+          <tr><th>Type</th><th>Name</th><th>Buy</th><th>Modify</th></tr>";
 
     // output data of each row
     while($row = $result->fetch_assoc()) {
@@ -53,14 +52,15 @@ if ($result->num_rows > 0) { // build exists, so display it
       echo "<tr><td>" . $row["type"] . "</td><td>" . $row["name"] . "</td><td>" .
            "<a href='https://www.google.com/search?output=search&tbm=shop&q=" .
            $url_name . "' target='_blank'>Go</a></td>";
-      // if list belongs to current user, allow parts to be removed
+      // if list belongs to current user, allow parts to be edited and removed
       if ($owner == $_SESSION["email"]) {
-        echo "<td><form action='remove_part.php'>" .
-             // part to delete
-             "<input type='hidden' name='part_id' value='" . $row["id"] . "'>" .
-             // build is identified by its ID and name
-             "<input type='hidden' name='build_id' value='$build_id'>" .
-             "<input type='submit' value='X'></form></td></tr>";
+        echo "<td><form action='remove_part.php'>
+              <input type='hidden' name='part_id' value='" . $row["id"] . "'>
+              <input type='submit' value='X'></form>
+
+              <form action='edit_part.php'>
+              <input type='hidden' name='part_id' value='" . $row["id"] . "'>
+              <input type='submit' value='Edit'></form></td></tr>";
       }
     }
 
@@ -73,9 +73,6 @@ if ($result->num_rows > 0) { // build exists, so display it
   if ($owner == $_SESSION["email"]) {
     echo "<br>Add new part:
           <form action='new_part.php'>";
-
-    // build is identified by its ID and name
-    $_SESSION["build_id"] = $build_id;
 
     // ask for part information
     echo "Type: <input type='text' name='part_type'><br>

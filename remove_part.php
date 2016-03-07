@@ -7,10 +7,11 @@ session_start();
   <meta charset="utf-8">
   <title>Remove Part</title>
 </head>
-<body>
 
+<body>
 <?php
-function look_up_build_owner($build_id) {
+// see if user has permission to delete a part
+function can_delete($user, $part_id) {
   $servername = "localhost";
   $username = "root";
   $password = "password";
@@ -23,14 +24,15 @@ function look_up_build_owner($build_id) {
       die("Connection failed: " . $conn->connect_error);
   }
 
-  $sql = "SELECT owner FROM builds WHERE id='$build_id'";
+  // find owner of this build
+  $sql = "SELECT owner FROM builds WHERE id='" . $_SESSION["build_id"] . "'";
   $result = $conn->query($sql);
 
   $owner = $result->fetch_assoc()["owner"];
 
   $conn->close();
 
-  return $owner;
+  return $owner == $_SESSION["email"];
 }
 
 function delete_part($part_id) {
@@ -62,20 +64,19 @@ function delete_part($part_id) {
   $conn = null;
 }
 
-// look up build owner, and compare with logged-in user
-$build_id = $_GET["build_id"];
-$build_owner = look_up_build_owner($build_id);
+$part_id = $_GET["part_id"];
 
 // if the current user is the owner of the build, allow part deletion
-if ($_SESSION["email"] == $build_owner) {
-  $part_id = $_GET["part_id"];
+if (can_delete($_SESSION["email"], $part_id)) {
   delete_part($part_id);
+
+  echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
+       "'>Back to Build</a>";
 } else {
-  echo "You are not the owner of this build.<br>";
+  echo "You are not the owner of this build.<br>
+        <a href='index.php'>Home</a>";
 }
-
-echo "<a href='display_build.php?build_id=" . $build_id . "'>Back to Build</a>";
 ?>
-
 </body>
+
 </html>

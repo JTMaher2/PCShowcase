@@ -11,39 +11,53 @@ session_start();
 <body>
 
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "password";
-$dbname = "pcshowcase";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-$email = $_SESSION["email"];
-$sql = "SELECT id, name FROM builds WHERE owner = '$email'";
-$result = $conn->query($sql);
-
 // if user is logged in
-if ($email != null) {
-  echo "<a href='logout.php'>Logout</a><br><br>"; // logout link
+if ($_SESSION["email"] != null) {
+  echo "<a href='logout.php'>Logout</a>"; // logout link
 
-  if ($result->num_rows > 0) {
-      echo "<table border='1'><tr><th>Builds</th></tr>";
+  echo "<h3>Builds</h3>";
+
+  // get builds from DB
+  $dsn = "mysql:dbname=pcshowcase;host=localhost";
+  $username = "root";
+  $password = "password";
+
+  try {
+    // Create connection
+    $dbh = new PDO($dsn, $username, $password);
+    // set the PDO error mode to exception
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $sql = "SELECT id, name
+        FROM builds
+        WHERE owner = :email";
+
+    $sth = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    $sth->execute(array(":email" => $_SESSION["email"]));
+
+    if ($sth->rowCount() > 0) {
+      echo "<table border='1'><tr><th>Name</th><th>Modify</th></tr>";
       // output data of each row
-      while($row = $result->fetch_assoc()) {
-          echo "<tr><td><a href='display_build.php?build_id=" . $row["id"] .
-               "'>" . $row["name"] . "</a></td>" .
-               "<td><form action='remove_build.php'>" .
-               "<input type='hidden' name='build_id' value='" . $row["id"] .
-               "'>" . "<input type='submit' value='X'>" . "</form></td></tr>";
+      while($row = $sth->fetch()) {
+        echo "<tr><td><a href='display_build.php?build_id=" . $row["id"] . "'>"
+             . $row["name"] . "</a></td>
+             <td><form action='remove_build.php'>
+             <input type='hidden' name='build_id' value='" . $row["id"] . "'>
+             <input type='submit' value='X'>
+             </form>
+             <form action='edit_build.php'>
+             <input type='hidden' name='build_id' value='" . $row["id"] . "'>
+             <input type='submit' value='Edit'>
+             </form></td></tr>";
       }
       echo "</table><br>";
-  } else {
-    echo "You do not have any builds.<br><br>";
+    } else {
+      echo "You do not have any builds.<br><br>";
+    }
+
+    $conn = null;
+  } catch (PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
   }
 
   echo "<strong>New build:</strong>
@@ -55,8 +69,6 @@ if ($email != null) {
   echo "You are not logged in.<br>
         <a href='index.php'>Home</a>";
 }
-
-$conn->close();
 ?>
 
 </body>
