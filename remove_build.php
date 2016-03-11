@@ -93,7 +93,7 @@ function delete_build($build_id) {
   $conn = null;
 }
 
-$current_user = $_SESSION["email"];
+$current_user = $_SESSION["user"];
 $build_id = $_GET["build_id"];
 
 // if the current user is the build owner, allow deletion

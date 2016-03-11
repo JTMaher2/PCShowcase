@@ -11,7 +11,7 @@ session_start();
 <body>
 
 <?php
-  $email = $_SESSION["email"];
+  $email = $_SESSION["user"];
   session_unset();
   session_destroy();
 

@@ -10,7 +10,7 @@ session_start();
 
 <body>
 <?php
-$user = $_SESSION["email"];
+$user = $_SESSION["user"];
 
 // if someone is logged in, link to builds page
 if ($user != null) {

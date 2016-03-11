@@ -61,7 +61,7 @@ if (account_activated($email)) {
     $submitted_password = $_POST["password"];
 
     if (password_verify($submitted_password, $hashed_password)) {
-      $_SESSION["email"] = $email; // use user's email as session variable
+      $_SESSION["user"] = $email; // use user's email as session variable
 
       echo "Login successful<br>";
       echo "<a href='builds.php'>My Builds</a>";

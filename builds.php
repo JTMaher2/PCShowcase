@@ -12,7 +12,7 @@ session_start();
 
 <?php
 // if user is logged in
-if ($_SESSION["email"] != null) {
+if ($_SESSION["user"] != null) {
   echo "<a href='logout.php'>Logout</a>"; // logout link
 
   echo "<h3>Builds</h3>";
@@ -33,7 +33,7 @@ if ($_SESSION["email"] != null) {
         WHERE owner = :email";
 
     $sth = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-    $sth->execute(array(":email" => $_SESSION["email"]));
+    $sth->execute(array(":email" => $_SESSION["user"]));
 
     if ($sth->rowCount() > 0) {
       echo "<table border='1'><tr><th>Name</th><th>Modify</th></tr>";

@@ -10,47 +10,63 @@ session_start();
 
 <body>
 <?php
-// see if user has permission to delete a part
-function can_delete($user, $part_id) {
-  $servername = "localhost";
+// find build that part belongs to
+function get_build() {
+  $db = "mysql:dbname=pcshowcase;host=localhost";
   $username = "root";
   $password = "password";
-  $dbname = "pcshowcase";
 
-  // Create connection
-  $conn = new mysqli($servername, $username, $password, $dbname);
-  // Check connection
-  if ($conn->connect_error) {
-      die("Connection failed: " . $conn->connect_error);
-  }
+  $conn = new PDO($db, $username, $password);
+  // set the PDO error mode to exception
+  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  // find owner of this build
-  $sql = "SELECT owner FROM builds WHERE id='" . $_SESSION["build_id"] . "'";
-  $result = $conn->query($sql);
+  // get build ID
+  $sql = "SELECT build_id FROM parts WHERE id = :part_id";
 
-  $owner = $result->fetch_assoc()["owner"];
+  $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $stmt->execute(array(":part_id" => $_GET["part_id"]));
 
-  $conn->close();
-
-  return $owner == $_SESSION["email"];
+  return $stmt->fetch()["build_id"];
 }
 
-function delete_part($part_id) {
-  $servername = "localhost";
+// find build owner
+function get_build_owner($build_id) {
+  $db = "mysql:dbname=pcshowcase;host=localhost";
   $username = "root";
   $password = "password";
-  $dbname = "pcshowcase";
+
+  $conn = new PDO($db, $username, $password);
+  // set the PDO error mode to exception
+  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+  // get owner
+  $sql = "SELECT owner FROM builds WHERE id = '$build_id'";
+
+  $stmt = $conn->query($sql);
+
+  $owner = $stmt->fetch()["owner"];
+
+  $conn = null;
+
+  return $owner;
+}
+
+// remove part from build
+function delete_part() {
+  $db = "mysql:dbname=pcshowcase;host=localhost";
+  $username = "root";
+  $password = "password";
 
   try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $conn = new PDO($db, $username, $password);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // sql to delete a record
-    $sql = "DELETE FROM parts WHERE id = '$part_id'";
+    $sql = "DELETE FROM parts WHERE id = :part_id";
 
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
+    $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    $stmt->execute(array(":part_id" => $_GET["part_id"]));
 
     if ($stmt->rowCount() > 0) {
       echo "Part deleted successfully<br>";
@@ -64,16 +80,15 @@ function delete_part($part_id) {
   $conn = null;
 }
 
-$part_id = $_GET["part_id"];
+$build_id = get_build();
 
 // if the current user is the owner of the build, allow part deletion
-if (can_delete($_SESSION["email"], $part_id)) {
-  delete_part($part_id);
+if (get_build_owner($build_id) == $_SESSION["user"]) {
+  delete_part();
 
-  echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
-       "'>Back to Build</a>";
+  echo "<a href='display_build.php?build_id=$build_id'>Back to Build</a>";
 } else {
-  echo "You are not the owner of this build.<br>
+  echo "You do not have permission to delete this part.<br>
         <a href='index.php'>Home</a>";
 }
 ?>

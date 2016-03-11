@@ -10,7 +10,7 @@ session_start();
 <body>
 
 <?php
-if ($_SESSION["email"] != null) {
+if ($_SESSION["user"] != null) {
   echo "<a href='logout.php'>Logout</a>"; // if logged in, display logout link
 }
 
@@ -53,7 +53,7 @@ if ($result->num_rows > 0) { // build exists, so display it
            "<a href='https://www.google.com/search?output=search&tbm=shop&q=" .
            $url_name . "' target='_blank'>Go</a></td>";
       // if list belongs to current user, allow parts to be edited and removed
-      if ($owner == $_SESSION["email"]) {
+      if ($owner == $_SESSION["user"]) {
         echo "<td><form action='remove_part.php'>
               <input type='hidden' name='part_id' value='" . $row["id"] . "'>
               <input type='submit' value='X'></form>
@@ -70,7 +70,7 @@ if ($result->num_rows > 0) { // build exists, so display it
   }
 
   // if list belongs to current user, allow parts to be added
-  if ($owner == $_SESSION["email"]) {
+  if ($owner == $_SESSION["user"]) {
     echo "<br>Add new part:
           <form action='new_part.php'>";
 

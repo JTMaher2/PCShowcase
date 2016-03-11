@@ -24,7 +24,7 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-$email = $_SESSION["email"];
+$email = $_SESSION["user"];
 $sql = "SELECT num_builds FROM users WHERE email='$email'";
 $result = $conn->query($sql);
 $num_builds = $result->fetch_assoc()["num_builds"];
