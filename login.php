@@ -1,7 +1,3 @@
-<?php
-// Start the session
-session_start();
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,59 +5,31 @@ session_start();
   <title>Login</title>
 </head>
 <body>
-
 <?php
-// see if account has been activated
-function account_activated($email) {
-  $dsn = 'mysql:dbname=pcshowcase;host=localhost';
-  $user = 'root';
-  $password = 'password';
+session_start();
 
-  try {
-    $dbh = new PDO($dsn, $user, $password);
-    // set the PDO error mode to exception
-    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $sql = "SELECT activated
-        FROM users
-        WHERE email = :email";
-
-    $sth = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-    $sth->execute(array(':email' => $email));
-
-    $activated = $sth->fetch()["activated"];
-  } catch (PDOException $e) {
-    echo "Connection failed: " . $e->getMessage();
-  }
-
-  return $activated;
-}
-
-$servername = "localhost";
+// attempt user login
+$db = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
-$dbname = "pcshowcase";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
+try {
+  $conn = new PDO($db, $username, $password);
+  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$email = $_POST["email"];
-$pw_sql = "SELECT password FROM users WHERE email = '$email'";
-$pw_result = $conn->query($pw_sql);
+  $sql = "SELECT password FROM users WHERE email = :email";
 
-$hashed_password = $pw_result->fetch_assoc()["password"];
+  // retrieve user's hashed password from DB
+  $stmt = $conn->prepare($sql,
+                         array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $stmt->execute(array(":email" => $_POST["email"]));
 
-if (account_activated($email)) {
-  if ($password != null) {
-    // verify password
-    $submitted_password = $_POST["password"];
+  $stored_password = $stmt->fetch()["password"];
 
-    if (password_verify($submitted_password, $hashed_password)) {
-      $_SESSION["user"] = $email; // use user's email as session variable
+  if (account_activated($conn)) {
+    // verify that submitted password is same as stored password
+    if (password_verify($_POST["password"], $stored_password)) {
+      $_SESSION["user"] = $_POST["email"]; // use user's email as ID
 
       echo "Login successful<br>";
       echo "<a href='builds.php'>My Builds</a>";
@@ -70,16 +38,27 @@ if (account_activated($email)) {
       echo "<a href='index.php'>Home</a>";
     }
   } else {
-    echo "No account exists for $email.<br>";
-    echo "<a href='index.php'>Home</a>";
+    echo "The account for " . $_POST["email"] . " does not exist or has not
+          been activated.<br>
+          <a href='index.php'>Home</a>";
   }
-} else {
-  echo "You cannot log in until your account is activated.<br>";
-  echo "<a href='index.php'>Home</a>";
+
+  $conn = null;
+} catch (PDOException $e) {
+  echo "Error: " . $e->getMessage();
+  die();
 }
 
-$conn->close();
-?>
+// see if account has been activated
+function account_activated($conn) {
+  $sql = "SELECT activated FROM users WHERE email = :email";
 
+  $stmt = $conn->prepare($sql,
+                         array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $stmt->execute(array(":email" => $_POST["email"]));
+
+  return $stmt->fetch()["activated"];
+}
+?>
 </body>
 </html>

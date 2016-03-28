@@ -1,7 +1,3 @@
-<?php
-// Start the session
-session_start();
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,15 +5,11 @@ session_start();
   <title>Logout</title>
 </head>
 <body>
-
 <?php
-  $email = $_SESSION["user"];
-  session_unset();
-  session_destroy();
-
-  echo "You are now logged out.<br>";
-  echo "<a href='index.php'>Home</a>";
+session_start();
+session_unset();
+session_destroy();
+header("Location: index.php");
 ?>
-
 </body>
 </html>

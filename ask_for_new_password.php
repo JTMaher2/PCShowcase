@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <title>Ask for New Password</title>
 </head>
-
 <body>
   <h3>Change Password</h3>
   <form action="process_password_change.php" method="post">
@@ -15,5 +14,4 @@
     <input type="submit" value="Submit">
   </form>
 </body>
-
 </html>

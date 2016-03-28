@@ -1,109 +1,80 @@
-<?php
-session_start();
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Remove Build</title>
 </head>
-
 <body>
 <?php
-// check if user is build owner
-function is_owner($user, $build_id) {
-  $servername = "localhost";
-  $username = "root";
-  $password = "password";
-  $dbname = "pcshowcase";
+session_start();
 
-  // Create connection
-  $conn = new mysqli($servername, $username, $password, $dbname);
-  // Check connection
-  if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-  }
+$db = "mysql:dbname=pcshowcase;host=localhost";
+$username = "root";
+$password = "password";
 
-  $sql = "SELECT owner FROM builds WHERE id = '$build_id'";
-  $result = $conn->query($sql);
+try {
+  $conn = new PDO($db, $username, $password);
+  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  $owner = $result->fetch_assoc()["owner"];
-
-  $conn->close();
-
-  return $user == $owner;
-}
-
-// get # of builds that currently exist for this user
-function select_num_builds($email) {
-  $servername = "localhost";
-  $username = "root";
-  $password = "password";
-  $dbname = "pcshowcase";
-
-  // Create connection
-  $conn = new mysqli($servername, $username, $password, $dbname);
-  // Check connection
-  if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-  }
-
-  $sql = "SELECT num_builds FROM users WHERE email = '$email'";
-  $result = $conn->query($sql);
-
-  $num_builds = $result->fetch_assoc()["num_builds"];
-
-  $conn->close();
-
-  return $num_builds;
-}
-
-// delete a build
-function delete_build($build_id) {
-  $servername = "localhost";
-  $username = "root";
-  $password = "password";
-  $dbname = "pcshowcase";
-
-  try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    // set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // delete build record
-    $sql = "DELETE FROM builds WHERE id = '$build_id'";
-    $conn->exec($sql); // use exec() because no results are returned
-
-    // delete parts that correspond to the deleted build
-    $sql = "DELETE FROM parts WHERE build_id = '$build_id'";
-    $conn->exec($sql);
-
-    // decrement this user's num_builds
-    $num_builds = select_num_builds($email);
-    $sql = "UPDATE users SET num_builds=" . ($num_builds - 1) . " WHERE email='$email'";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-
-    echo "Build deleted successfully<br>";
-    echo "<a href='builds.php'>My Builds</a>";
-  } catch(PDOException $e) {
-    echo $sql . "<br>" . $e->getMessage();
+  // if the current user is the build owner, allow deletion
+  if ($_SESSION["user"] == get_owner($conn)) {
+    delete_build($conn);
+  } else {
+    echo "You do not have permission to delete this build.<br>
+          <a href='index.php'>Home</a>";
   }
 
   $conn = null;
+} catch (PDOException $e) {
+  echo "Error: " . $e->getMessage();
+  die();
 }
 
-$current_user = $_SESSION["user"];
-$build_id = $_GET["build_id"];
+// get owner of build
+function get_owner($conn) {
+  $sql = "SELECT owner FROM builds WHERE id = :id";
 
-// if the current user is the build owner, allow deletion
-if (is_owner($current_user, $build_id)) {
-  delete_build($build_id);
-} else {
-  echo "You do not have permission to delete this build.<br>
-        <a href='index.php'>Home</a>";
+  $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $stmt->execute(array(":id" => $_GET["build_id"]));
+
+  return $stmt->fetch()["owner"];
+}
+
+// get # of builds that currently exist for this user
+function get_num_builds($conn) {
+  $sql = "SELECT num_builds FROM users WHERE email = :email";
+
+  $stmt = $conn->prepare($sql,
+                         array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $stmt->execute(array(":email" => $_SESSION["user"]));
+
+  return $stmt->fetch()["num_builds"];
+}
+
+// delete a build
+function delete_build($conn) {
+  // delete build record
+  $sql = "DELETE FROM builds WHERE id = :id";
+
+  $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $stmt->execute(array(":id" => $_GET["build_id"]));
+
+  // delete parts that correspond to the deleted build
+  $sql = "DELETE FROM parts WHERE build_id = :id";
+
+  $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $stmt->execute(array(":id" => $_GET["build_id"]));
+
+  // decrement this user's num_builds
+  $sql = "UPDATE users SET num_builds = " . (get_num_builds($conn) - 1) .
+         " WHERE email = :email";
+
+  $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $stmt->execute(array(":email" => $_SESSION["user"]));
+
+  echo "Build deleted successfully<br>
+        <a href='builds.php'>Builds</a>";
 }
 ?>
 </body>
-
 </html>

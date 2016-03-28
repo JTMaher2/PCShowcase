@@ -5,158 +5,119 @@
   <title>Process Register</title>
 </head>
 <body>
-
 <?php
-// store a security token in the users table
-function store_token_in_db($token, $email) {
-  $servername = "localhost";
-  $username = "root";
-  $password = "password";
-  $dbname = "pcshowcase";
+$db = "mysql:dbname=pcshowcase;host=localhost";
+$username = "root";
+$password = "password";
 
-  try { // to add token to user record
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    // set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+try { // to add token to user record
+  $conn = new PDO($db, $username, $password);
+  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $sql = "UPDATE users SET token='$token' WHERE email='$email'";
-
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-  } catch(PDOException $e) {
-    echo $sql . "<br>" . $e->getMessage();
+  // do not proceed if email is already registered
+  if (is_registered($_POST["email"], $conn)) {
+    echo "That email address is already in use.<br>
+          <a href='index.php'>Home</a>";
+  } else {
+    // check for valid password
+    if (valid_password()) {
+      register_user($conn); // safe to add new record to database
+    } else {
+      echo "Password must .<br>
+            <a href='register.html'>Back</a>";
+    }
   }
 
   $conn = null;
-}
-
-function send_activation_email($email) {
-  // Generate a security token that can be used to verify the user's identity
-  $date = date_create();
-  $timestamp = date_timestamp_get($date);
-  // token is a hash of current timestamp
-  $token = password_hash($timestamp, PASSWORD_DEFAULT);
-
-  store_token_in_db($token, $email);
-
-  $subject = "Activate Your PC Showcase Account";
-
-  $message = "
-  <html>
-  <head>
-  <title>PC Showcase Account Activation</title>
-  </head>
-  <body>
-  Click <a href='localhost/activate_account.php?email=" . $email . "&token=" .
-  $token . "'>here</a> to activate your account.
-  </body>
-  </html>
-  ";
-
-  $headers = "MIME-Version: 1.0" . "\r\n";
-  $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-  $headers .= 'From: <jtmaher2@gmail.com>' . "\r\n";
-
-  // send email
-  mail($address,$subject,$message,$headers);
-}
-
-function register_user($email, $user_password) {
-  $servername = "localhost";
-  $username = "root";
-  $db_password = "password";
-  $dbname = "pcshowcase";
-
-  try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username,
-                    $db_password);
-    // set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // hash and salt the password
-    $hashed_user_password = password_hash($user_password, PASSWORD_DEFAULT);
-
-    $sql = "INSERT INTO users (email, password)
-            VALUES ('$email', '$hashed_user_password')";
-    $conn->exec($sql); // use exec() because no results are returned
-
-    send_activation_email($email);
-
-    echo "Please check your inbox for an email that contains instructions on
-          how to activate your account.<br><a href='index.php'>Home</a>";
-  }
-  catch(PDOException $e) {
-    echo $sql . "<br>" . $e->getMessage();
-  }
-
-  $conn = null;
-}
-
-// check if email address is already registered
-function is_registered($email) {
-  $servername = "localhost";
-  $username = "root";
-  $password = "password";
-  $dbname = "pcshowcase";
-
-  try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $sql = "SELECT count(1) FROM users WHERE email = '$email'";
-    $stmt = $conn->query($sql);
-    $result = $stmt->fetch()["count(1)"];
-    $conn = null;
-  } catch(PDOException $e) {
-    echo $e->getMessage();
-  }
-
-  return $result; // 1 if already registered, 0 if not already registered
+} catch(PDOException $e) {
+  echo "Error: " . $e->getMessage();
+  die();
 }
 
 // check if submitted password is valid
-function valid_password($password, $confirm_password) {
-  $valid = false;
-
-  // check if password matches confirmed password
-  if (strcmp($password, $confirm_password) == 0) {
-    // check if password is correct length
-    if (strlen($password) >= 8 && strlen($password) <= 64) {
-      // check if password contains at least 1 letter, 1 number, and 1 symbol
-      if (preg_match('/[a-zA-Z]/', $password) &&
-          preg_match('/\d/', $password) &&
-          preg_match('/\W/', $password)) {
-        $valid = true;
+function valid_password() {
+  if (strcmp($_POST["password"], $_POST["confirm_password"]) == 0) {
+    if (strlen($_POST["password"]) >= 8 && strlen($_POST["password"]) <= 64) {
+      if (preg_match('/[a-zA-Z]/', $_POST["password"]) &&
+          preg_match('/\d/', $_POST["password"]) &&
+          preg_match('/\W/', $_POST["password"])) {
+        return true;
       } else {
-        echo "Password must contain at least 1 letter, at least 1 number, and
-              at least 1 symbol<br>";
+        echo "Password must contain at least 1 letter, 1 number, and 1
+              symbol<br>";
       }
     } else {
-      echo "Password must be 8-64 characters<br>";
+      echo "Password must be between 8 and 64 characters";
     }
-  } else { // password does not match confirm_password
-    echo "Password and confirm password do not match<br>";
+  } else {
+    echo "Password and confirmed password do not match";
   }
 
-  return $valid;
+  return false;
 }
 
-$email = $_POST["email"];
+// store a security token in the users table
+function store_token_in_db($token, $conn) {
+  $sql = "UPDATE users SET token = :token WHERE email = :email";
 
-// do not proceed if email is already registered
-if (is_registered($email)) {
-  echo "That email address is already in use.<br>";
-  echo "<a href='index.php'>Home</a>";
-} else {
-  // check for valid password
-  $password = $_POST["password"];
-  $confirm_password = $_POST["confirm_password"];
+  $stmt = $conn->prepare($sql,
+                         array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $stmt->execute(array(":token" => $token, ":email" => $_POST["email"]));
+}
 
-  if (valid_password($password, $confirm_password)) {
-    register_user($email, $password); // safe to add new record to database
-  } else {
-    echo "<a href='register.html'>Back</a>";
-  }
+// send activation instructions to user's email address
+function send_activation_email($conn) {
+  // token is hash of current timestamp
+  $token = password_hash(date_timestamp_get(date_create()), PASSWORD_DEFAULT);
+
+  store_token_in_db($token, $conn);
+
+  $subject = "Activate Your PC Showcase Account";
+
+  $message = "<html>
+              <head>
+                <title>PC Showcase Account Activation</title>
+              </head>
+              <body>
+                Click <a href='localhost/activate_account.php?email=" .
+                               $_POST["email"] . "&token=$token'>here</a> to
+                activate your account.
+              </body>
+              </html>";
+
+  $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom:
+              <jtmaher2@gmail.com>\r\n";
+
+  mail($_POST["email"], $subject, $message, $headers); // send
+}
+
+// put user in database
+function register_user($conn) {
+  // hash and salt the password
+  $hashed_password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+
+  $sql = "INSERT INTO users (email, password) VALUES (:email, :password)";
+
+  $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $stmt->execute(array(":email" => $_POST["email"],
+                       ":password" => $hashed_password));
+
+  send_activation_email($conn);
+
+  echo "Please check your inbox for an email that contains instructions on
+        how to activate your account.<br><a href='index.php'>Home</a>";
+}
+
+// check if email address is already registered
+function is_registered($email, $conn) {
+  $sql = "SELECT count(1) FROM users WHERE email = :email";
+
+  $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $stmt->execute(array(":email" => $_POST["email"]));
+
+  // 1 if already registered, 0 if not already registered
+  return $stmt->fetch()["count(1)"];
 }
 ?>
-
 </body>
 </html>

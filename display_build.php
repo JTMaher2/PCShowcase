@@ -1,6 +1,3 @@
-<?php
-session_start();
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,58 +5,94 @@ session_start();
   <title>Current Build</title>
 </head>
 <body>
-
 <?php
+session_start();
+
 if ($_SESSION["user"] != null) {
   echo "<a href='logout.php'>Logout</a>"; // if logged in, display logout link
 }
 
-$servername = "localhost";
+$_SESSION["build_id"] = $_GET["build_id"]; // update session var
+
+$db = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
-$dbname = "pcshowcase";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
+try {
+  // Create connection
+  $conn = new PDO($db, $username, $password);
+  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+  display_build($conn); // display selected build, if it exists
+
+  $conn = null;
+} catch (PDOException $e) {
+  echo "Error: " . $e->getMessage();
+  die();
 }
 
-$_SESSION["build_id"] = $_GET["build_id"];
-$sql = "SELECT name, owner FROM builds WHERE id = " . $_SESSION["build_id"];
-$result = $conn->query($sql);
+echo "<a href='builds.php'>Builds</a>";
 
-if ($result->num_rows > 0) { // build exists, so display it
-  $build_details = $result->fetch_assoc();
-  $build_name = $build_details["name"];
-  $owner = $build_details["owner"];
+// display a build
+function display_build($conn) {
+  $sql = "SELECT name, owner FROM builds WHERE id = " . $_SESSION["build_id"];
 
-  echo "<h3>$build_name:</h3>";
+  $stmt = $conn->prepare($sql);
+  $stmt->execute();
 
-  // select parts for this build
-  $sql = "SELECT id, type, name FROM parts WHERE build_id = " . $_SESSION["build_id"];
-  $result = $conn->query($sql);
+  if ($stmt->rowCount() > 0) { // build exists, so display it
+    $build = $stmt->fetch();
 
-  if ($result->num_rows > 0) { // if this build has parts
+    echo "<h3>" . $build["name"] . ":</h3>";
+
+    display_parts($build["owner"], $conn); // display parts for this build
+
+    // if list belongs to current user, allow parts to be added
+    if ($_SESSION["user"] == $build["owner"]) {
+      echo "<br>Add new part:
+            <form action='new_part.php'>";
+
+      // ask for part information
+      echo "Type: <input type='text' name='part_type'><br>
+            Name: <input type='text' name='part_name'><br>
+            <input type='submit' value='Add'>
+            </form><br>";
+    }
+  } else { // build doesn't exist
+    echo "Invalid build ID<br>";
+  }
+}
+
+// display parts for current build
+function display_parts($build_owner, $conn) {
+  $sql = "SELECT id, type, name FROM parts WHERE build_id = " .
+         $_SESSION["build_id"];
+
+  $stmt = $conn->query($sql);
+
+  if ($stmt->rowCount() > 0) { // if this build has parts
     echo "<table border='1' style='width:100%'>
           <tr><th>Type</th><th>Name</th><th>Buy</th><th>Modify</th></tr>";
 
-    // output data of each row
-    while($row = $result->fetch_assoc()) {
-      $url_name = str_replace(' ', '+', strtolower($row["name"]));
+    $google_shopping_url =
+      "https://www.google.com/search?output=search&tbm=shop&q=";
 
-      echo "<tr><td>" . $row["type"] . "</td><td>" . $row["name"] . "</td><td>" .
-           "<a href='https://www.google.com/search?output=search&tbm=shop&q=" .
-           $url_name . "' target='_blank'>Go</a></td>";
+    // output data for each part
+    while ($part = $stmt->fetch()) {
+      // convert part name into format that is understood by Google Shopping
+      $url_part_name = str_replace(' ', '+', strtolower($part["name"]));
+
+      echo "<tr><td>" . $part["type"] . "</td><td>" . $part["name"] .
+           "</td><td>" . "<a href='$google_shopping_url" . $url_part_name .
+           "' target='_blank'>Go</a></td>";
+
       // if list belongs to current user, allow parts to be edited and removed
-      if ($owner == $_SESSION["user"]) {
+      if ($_SESSION["user"] == $build_owner) {
         echo "<td><form action='remove_part.php'>
-              <input type='hidden' name='part_id' value='" . $row["id"] . "'>
+              <input type='hidden' name='part_id' value='" . $part["id"] . "'>
               <input type='submit' value='X'></form>
-
               <form action='edit_part.php'>
-              <input type='hidden' name='part_id' value='" . $row["id"] . "'>
+              <input type='hidden' name='part_id' value='" . $part["id"] . "'>
               <input type='submit' value='Edit'></form></td></tr>";
       }
     }
@@ -68,26 +101,7 @@ if ($result->num_rows > 0) { // build exists, so display it
   } else {
     echo "0 parts<br>";
   }
-
-  // if list belongs to current user, allow parts to be added
-  if ($owner == $_SESSION["user"]) {
-    echo "<br>Add new part:
-          <form action='new_part.php'>";
-
-    // ask for part information
-    echo "Type: <input type='text' name='part_type'><br>
-          Name: <input type='text' name='part_name'><br>
-          <input type='submit' value='Add'>
-          </form><br>";
-  }
-} else { // build doesn't exist
-  echo "Invalid build ID<br>";
 }
-
-$conn->close();
-
-echo "<br><a href='builds.php'>Back to Overview</a>";
 ?>
-
 </body>
 </html>
