@@ -8,13 +8,15 @@
 <?php
 session_start();
 
+require "header.php";
+
 // attempt user login
-$db = "mysql:dbname=pcshowcase;host=localhost";
+$dsn = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
 
 try {
-  $conn = new PDO($db, $username, $password);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   $sql = "SELECT password FROM users WHERE email = :email";
@@ -32,22 +34,20 @@ try {
       $_SESSION["user"] = $_POST["email"]; // use user's email as ID
 
       echo "Login successful<br>";
-      echo "<a href='builds.php'>My Builds</a>";
     } else {
       echo "Incorrect password<br>";
-      echo "<a href='index.php'>Home</a>";
     }
   } else {
     echo "The account for " . $_POST["email"] . " does not exist or has not
-          been activated.<br>
-          <a href='index.php'>Home</a>";
+          been activated.<br>";
   }
 
   $conn = null;
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
-  die();
 }
+
+require "footer.php";
 
 // see if account has been activated
 function account_activated($conn) {

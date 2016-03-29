@@ -8,12 +8,14 @@
 <?php
 session_start();
 
-$db = "mysql:dbname=pcshowcase;host=localhost";
+require "header.php";
+
+$dsn = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
 
 try {
-  $conn = new PDO($db, $username, $password);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   // if the current user is the build owner, allow deletion
@@ -27,8 +29,9 @@ try {
   $conn = null;
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
-  die();
 }
+
+require "footer.php";
 
 // get owner of build
 function get_owner($conn) {
@@ -72,8 +75,7 @@ function delete_build($conn) {
   $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
   $stmt->execute(array(":email" => $_SESSION["user"]));
 
-  echo "Build deleted successfully<br>
-        <a href='builds.php'>Builds</a>";
+  echo "Build deleted successfully<br>";
 }
 ?>
 </body>

@@ -8,12 +8,16 @@
 <?php
 session_start();
 
-$db = "mysql:dbname=pcshowcase;host=localhost";
+require "header.php";
+
+echo "<h3>New Build</h3>";
+
+$dsn = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
 
 try { // to make new build and increment user's # of builds
-  $conn = new PDO($db, $username, $password);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   new_build($conn);
@@ -22,8 +26,9 @@ try { // to make new build and increment user's # of builds
   $conn = null;
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
-  die();
 }
+
+require "footer.php";
 
 // add new record to builds table
 function new_build($conn) {
@@ -39,7 +44,7 @@ function new_build($conn) {
 
   $build_id = $conn->lastInsertId(); // get this build's ID
 
-  echo "<a href='display_build.php?build_id=" . $build_id . "'>View</a>";
+  echo "<a href='display_build.php?build_id=" . $build_id . "'>View</a><br>";
 }
 
 // increment # of builds that belong to user

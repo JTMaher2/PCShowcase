@@ -6,12 +6,16 @@
 </head>
 <body>
 <?php
-$db = "mysql:dbname=pcshowcase;host=localhost";
+session_start();
+
+require "header.php";
+
+$dsn = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
 
 try { // to activate user's account
-  $conn = new PDO($db, $username, $password);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   // if the provided token is the same as the token in the database
@@ -24,10 +28,9 @@ try { // to activate user's account
   $conn = null;
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
-  die();
 }
 
-echo "<a href='index.php'>Home</a>";
+$require "footer.php";
 
 // retrieve token for specified user
 function get_stored_token($conn) {

@@ -8,29 +8,31 @@
 <?php
 session_start();
 
+require "header.php";
+
 // if user is logged in, and is the owner of this part's build
 if ($_SESSION["user"] != null && $_SESSION["user"] == get_part_owner()) {
-  echo "<form action='process_part_edit.php'>
+  echo "<h3>Edit " . $_GET["name"] . "</h3>
+        <form action='process_part_edit.php'>
           <input type='hidden' name='part_id' value='" . $_GET["part_id"] . "'>
-          New Type: <input type='text' name='type'><br>
-          New Name: <input type='text' name='name'><br>
-          <input type='submit' value='Submit Changes'>
+          Type: <input type='text' name='type'><br>
+          Name: <input type='text' name='name'><br>
+          <input type='submit' value='Submit'>
         </form><br>
         <a href='display_build.php?build_id=" . $_SESSION["build_id"] .
-                   "'>Back</a>";
+                   "'>Back</a><br>";
 } else {
-  echo "You do not have permission to edit this part.<br>
-        <a href='index.php'>Home</a>";
+  echo "You do not have permission to edit this part.<br>";
 }
 
 // get owner that corresponds to unique part ID
 function get_part_owner() {
-  $db = "mysql:dbname=pcshowcase;host=localhost";
+  $dsn = "mysql:dbname=pcshowcase;host=localhost";
   $username = "root";
   $password = "password";
 
   try {
-    $conn = new PDO($db, $username, $password);
+    $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // get build ID
@@ -53,11 +55,12 @@ function get_part_owner() {
     $conn = null;
   } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
-    die();
   }
 
   return $owner;
 }
+
+require "footer.php";
 ?>
 </body>
 </html>

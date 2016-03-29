@@ -1,5 +1,12 @@
 <?php
-echo "<a href='reset_password.html'>Change Password</a> |
-      <a href='change_username.html'>Change Username</a> |
-      <a href='deactivate_account.html'>Deactivate Account</a><br>";
+echo "<a href='index.php'>Home</a>";
+
+if ($_SESSION["user"]) { // if logged in
+  echo " | <a href='my_builds.php'>My Builds</a> |
+        <a href='all_builds.php'>All Builds</a> |
+        <a href='settings.php'>Settings</a> |
+        <a href='logout.php'>Logout</a>";
+}
+
+echo "<br>";
 ?>

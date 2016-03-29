@@ -8,19 +8,17 @@
 <?php
 session_start();
 
-if ($_SESSION["user"] != null) {
-  echo "<a href='logout.php'>Logout</a>"; // if logged in, display logout link
-}
+require "header.php";
 
 $_SESSION["build_id"] = $_GET["build_id"]; // update session var
 
-$db = "mysql:dbname=pcshowcase;host=localhost";
+$dsn = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
 
 try {
   // Create connection
-  $conn = new PDO($db, $username, $password);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   display_build($conn); // display selected build, if it exists
@@ -28,10 +26,9 @@ try {
   $conn = null;
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
-  die();
 }
 
-echo "<a href='builds.php'>Builds</a>";
+require "footer.php";
 
 // display a build
 function display_build($conn) {
@@ -43,7 +40,8 @@ function display_build($conn) {
   if ($stmt->rowCount() > 0) { // build exists, so display it
     $build = $stmt->fetch();
 
-    echo "<h3>" . $build["name"] . ":</h3>";
+    echo "<h3>" . $build["name"] . "</h3>
+         Created by " . $build["owner"] . "<br>";
 
     display_parts($build["owner"], $conn); // display parts for this build
 
@@ -55,8 +53,8 @@ function display_build($conn) {
       // ask for part information
       echo "Type: <input type='text' name='part_type'><br>
             Name: <input type='text' name='part_name'><br>
-            <input type='submit' value='Add'>
-            </form><br>";
+            <input type='submit' value='Submit'>
+            </form>";
     }
   } else { // build doesn't exist
     echo "Invalid build ID<br>";
@@ -72,7 +70,14 @@ function display_parts($build_owner, $conn) {
 
   if ($stmt->rowCount() > 0) { // if this build has parts
     echo "<table border='1' style='width:100%'>
-          <tr><th>Type</th><th>Name</th><th>Buy</th><th>Modify</th></tr>";
+          <tr><th>Type</th><th>Name</th><th>Buy</th>";
+
+    // if current user is build creator, allow modification
+    if ($_SESSION["user"] == $build_owner) {
+      echo "<th>Modify</th>";
+    }
+
+    echo "</tr>";
 
     $google_shopping_url =
       "https://www.google.com/search?output=search&tbm=shop&q=";
@@ -88,12 +93,20 @@ function display_parts($build_owner, $conn) {
 
       // if list belongs to current user, allow parts to be edited and removed
       if ($_SESSION["user"] == $build_owner) {
-        echo "<td><form action='remove_part.php'>
-              <input type='hidden' name='part_id' value='" . $part["id"] . "'>
-              <input type='submit' value='X'></form>
+        echo "<td>
+              <form action='remove_part.php'>
+                <input type='hidden' name='part_id' value='" . $part["id"] .
+                "'>
+                <input type='submit' value='X'>
+              </form>
               <form action='edit_part.php'>
-              <input type='hidden' name='part_id' value='" . $part["id"] . "'>
-              <input type='submit' value='Edit'></form></td></tr>";
+                <input type='hidden' name='part_id' value='" . $part["id"] .
+                "'>
+                <input type='hidden' name='name' value='" . $part["name"] .
+                "'>
+                <input type='submit' value='Edit'>
+              </form>
+              </td></tr>";
       }
     }
 

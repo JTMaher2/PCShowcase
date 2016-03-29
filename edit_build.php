@@ -8,28 +8,30 @@
 <?php
 session_start();
 
+require "header.php";
+
 // if viewer is logged in, and is build owner
 if ($_SESSION["user"] != null && $_SESSION["user"] == get_build_owner()) {
   // allow editing
-  echo "<a href='logout.php'>Logout</a>
-        <h3>Edit Build</h3>
+  echo "<h3>Edit Build</h3>
         <form action='process_build_edit.php'>
           Name: <input type='text' name='new_name'><br>
           <input type='submit' value='Submit'>
         </form>";
 } else {
-  echo "You do not have permission to edit this build.<br>
-        <a href='index.php'>Home</a>";
+  echo "You do not have permission to edit this build.<br>";
 }
+
+require "footer.php";
 
 // get owner of a build
 function get_build_owner() {
-  $db = "mysql:dbname=pcshowcase;host=localhost";
+  $dsn = "mysql:dbname=pcshowcase;host=localhost";
   $username = "root";
   $password = "password";
 
   try {
-    $conn = new PDO($db, $username, $password);
+    $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $sql = "SELECT owner FROM builds WHERE id = :build_id";
@@ -43,7 +45,6 @@ function get_build_owner() {
     $conn = null;
   } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
-    die();
   }
 
   return $owner;

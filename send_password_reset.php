@@ -6,6 +6,10 @@
 </head>
 <body>
 <?php
+session_start();
+
+require "header.php";
+
 // token is a hash of current timestamp
 $token = password_hash(date_timestamp_get(date_create()), PASSWORD_DEFAULT);
 
@@ -33,16 +37,18 @@ $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom:
 mail($_POST["email"], $subject, $message, $headers);
 
 echo "Please check your inbox for instructions on how to reset your password.
-      <br><a href='index.php'>Home</a>";
+      <br>";
+
+require "footer.php";
 
 // store a security token in the users table
 function store_token_in_db($token) {
-  $db = "mysql:dbname=pcshowcase;host=localhost";
+  $dsn = "mysql:dbname=pcshowcase;host=localhost";
   $username = "root";
   $password = "password";
 
   try { // to add token to user record
-    $conn = new PDO($db, $username, $password);
+    $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $sql = "UPDATE users SET token = :token WHERE email = :email";
@@ -54,7 +60,6 @@ function store_token_in_db($token) {
     $conn = null;
   } catch(PDOException $e) {
     echo "Error: " . $e->getMessage();
-    die();
   }
 }
 ?>

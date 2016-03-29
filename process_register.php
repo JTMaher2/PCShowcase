@@ -6,18 +6,26 @@
 </head>
 <body>
 <?php
-$db = "mysql:dbname=pcshowcase;host=localhost";
+session_start();
+
+require "header.php";
+
+$dsn = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
 
 try { // to add token to user record
-  $conn = new PDO($db, $username, $password);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+  // if the database does not already exist, create it
+  if (!db_exists($conn)) {
+    create_db($conn);
+  }
 
   // do not proceed if email is already registered
   if (is_registered($_POST["email"], $conn)) {
-    echo "That email address is already in use.<br>
-          <a href='index.php'>Home</a>";
+    echo "That email address is already in use.<br>";
   } else {
     // check for valid password
     if (valid_password()) {
@@ -31,7 +39,46 @@ try { // to add token to user record
   $conn = null;
 } catch(PDOException $e) {
   echo "Error: " . $e->getMessage();
-  die();
+}
+
+require "footer.php";
+
+// does the PC Showcase database already exist?
+function db_exists($conn) {
+  $sql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE
+          SCHEMA_NAME = 'pcshowcase'";
+
+  $stmt = $conn->prepare($sql);
+
+  return $stmt->execute(); // 1 if exists, 0 otherwise
+}
+
+// create PC Showcase database
+function create_db($conn) {
+  $sql = "CREATE DATABASE pcshowcase";
+
+  $conn->exec($sql);
+
+  $sql = "CREATE TABLE users (email VARCHAR(254) PRIMARY KEY,
+                              activated TINYINT(1),
+                              password TEXT,
+                              token TEXT,
+                              num_builds INT(11) UNSIGNED)";
+
+  $conn->exec($sql);
+
+  $sql = "CREATE TABLE builds (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY_KEY,
+                               name TEXT,
+                               owner VARCHAR(254))";
+
+  $conn->exec($sql);
+
+  $sql = "CREATE TABLE parts (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY_KEY,
+                              build_id INT(11) UNSIGNED,
+                              type TEXT,
+                              name TEXT)";
+
+  $conn->exec($sql);
 }
 
 // check if submitted password is valid
@@ -105,7 +152,7 @@ function register_user($conn) {
   send_activation_email($conn);
 
   echo "Please check your inbox for an email that contains instructions on
-        how to activate your account.<br><a href='index.php'>Home</a>";
+        how to activate your account.<br>";
 }
 
 // check if email address is already registered

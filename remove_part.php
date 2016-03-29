@@ -8,12 +8,16 @@
 <?php
 session_start();
 
-$db = "mysql:dbname=pcshowcase;host=localhost";
+require "header.php";
+
+echo "<h3>Remove Part</h3>";
+
+$dsn = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
 
 try {
-  $conn = new PDO($db, $username, $password);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   $build_id = get_build($conn);
@@ -22,17 +26,17 @@ try {
   if (get_build_owner($build_id, $conn) == $_SESSION["user"]) {
     delete_part($conn);
 
-    echo "<a href='display_build.php?build_id=$build_id'>Back</a>";
+    echo "<a href='display_build.php?build_id=$build_id'>Back</a><br>";
   } else {
-    echo "You do not have permission to delete this part.<br>
-          <a href='index.php'>Home</a>";
+    echo "You do not have permission to delete this part.<br>";
   }
 
   $conn = null;
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
-  die();
 }
+
+require "footer.php";
 
 // find build that part belongs to
 function get_build($conn) {

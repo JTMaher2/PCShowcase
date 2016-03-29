@@ -8,17 +8,17 @@
 <?php
 session_start();
 
-if ($_SESSION["user"] != null) {
-  require "header.php";
+require "header.php";
 
+if ($_SESSION["user"] != null) {
   echo "<h3>Builds</h3>";
 
-  $db = "mysql:dbname=pcshowcase;host=localhost";
+  $dsn = "mysql:dbname=pcshowcase;host=localhost";
   $username = "root";
   $password = "password";
 
   try { // to get builds from DB
-    $conn = new PDO($db, $username, $password);
+    $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $sql = "SELECT id, name FROM builds WHERE owner = :email";

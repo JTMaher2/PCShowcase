@@ -6,12 +6,16 @@
 </head>
 <body>
 <?php
-$db = "mysql:dbname=pcshowcase;host=localhost";
+session_start();
+
+require "header.php";
+
+$dsn = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
 
 try {
-  $conn = new PDO($db, $username, $password);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   validate_password($conn);
@@ -19,8 +23,9 @@ try {
   $conn = null;
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
-  die();
 }
+
+require "footer.php";
 
 // verify submitted token and password
 function validate_password($conn) {
@@ -53,8 +58,7 @@ function validate_password($conn) {
       "&token=" . $_POST["token"] . "'>Back</a>";
     }
   } else {
-    echo "Error: invalid token<br>
-          <a href='index.html'>Home</a>";
+    echo "Error: invalid token<br>";
   }
 }
 
@@ -81,8 +85,7 @@ function change_password($conn) {
   $stmt->execute(array(":password" => $hashed_password,
                        ":email" => $_POST["email"]));
 
-  echo "Password successfully changed<br>
-        <a href='index.php'>Home</a>";
+  echo "Password successfully changed<br>";
 }
 ?>
 </body>

@@ -8,12 +8,16 @@
 <?php
 session_start();
 
-$db = "mysql:host=localhost;dbname=pcshowcase";
+require "header.php";
+
+echo "<h3>New Part</h3>";
+
+$dsn = "mysql:host=localhost;dbname=pcshowcase";
 $username = "root";
 $password = "password";
 
 try {
-  $conn = new PDO($db, $username, $password);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   add_part($conn);
@@ -21,8 +25,9 @@ try {
   $conn = null;
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
-  die();
 }
+
+require "footer.php";
 
 // try to add part to build
 function add_part($conn) {
@@ -47,14 +52,12 @@ function add_part($conn) {
 
       // link back to build
       echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
-           "'>Back to Build</a>";
+           "'>Back</a><br>";
     } else {
-      echo "You have not specified a build.<br>
-            <a href='builds.php'>My Builds</a>";
+      echo "You have not specified a build.<br>";
     }
   } else {
-    echo "You are not logged in.<br>
-          <a href='index.php'>Home</a>";
+    echo "You are not logged in.<br>";
   }
 }
 

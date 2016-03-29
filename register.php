@@ -30,6 +30,11 @@
   }
 </style>
 <body>
+<?php
+session_start();
+require "header.php";
+?>
+
 <h3>Register</h3>
 
 <form action="process_register.php" method="post">
@@ -43,6 +48,8 @@
   <input type="password" name="password"><br>
   Confirm password: <input type="password" name="confirm_password"><br>
   <input type="submit" value="Submit">
-</form>
+</form><br>
+
+<?php require "footer.php"; ?>
 </body>
 </html>

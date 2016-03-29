@@ -8,12 +8,14 @@
 <?php
 session_start();
 
-$db = "mysql:dbname=pcshowcase;host=localhost";
+require "header.php";
+
+$dsn = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
 
 try {
-  $conn = new PDO($db, $username, $password);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   update_part($conn);
@@ -21,8 +23,9 @@ try {
   $conn = null;
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
-  die();
 }
+
+require "footer.php";
 
 // attempt to modify a part
 function update_part($conn) {
@@ -55,12 +58,11 @@ function update_part($conn) {
 
     echo "Part updated<br>";
   } else {
-    echo "You do not have permission to edit this part.<br>
-          <a href='index.php'>Home</a>";
+    echo "You do not have permission to edit this part.<br><br>";
   }
 
   echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
-       "'>Back</a>";
+       "'>Back</a><br>";
 }
 
 // get owner that corresponds to unique part ID

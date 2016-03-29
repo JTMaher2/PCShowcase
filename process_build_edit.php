@@ -8,12 +8,14 @@
 <?php
 session_start();
 
-$db = "mysql:dbname=pcshowcase;host=localhost";
+require "header.php";
+
+$dsn = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
 
 try {
-  $conn = new PDO($db, $username, $password);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   update_build($conn);
@@ -22,6 +24,8 @@ try {
 } catch (PDOException $e) {
   echo "Connection failed: " . $e->getMessage();
 }
+
+require "footer.php";
 
 // attempt to update build
 function update_build($conn) {
@@ -44,7 +48,7 @@ function update_build($conn) {
     echo "You do not have permission to edit this build.<br>";
   }
 
-  echo "<a href='builds.php'>Back</a>";
+  echo "<a href='my_builds.php'>Back</a>";
 }
 
 // get build creator
