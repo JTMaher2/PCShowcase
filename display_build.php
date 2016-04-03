@@ -46,7 +46,7 @@ function display_build($conn) {
     display_parts($build["owner"], $conn); // display parts for this build
 
     // if list belongs to current user, allow parts to be added
-    if ($_SESSION["user"] == $build["owner"]) {
+    if (isset($_SESSION["user"]) && $_SESSION["user"] == $build["owner"]) {
       echo "<br>Add new part:
             <form action='new_part.php'>";
 
@@ -73,7 +73,7 @@ function display_parts($build_owner, $conn) {
           <tr><th>Type</th><th>Name</th><th>Buy</th>";
 
     // if current user is build creator, allow modification
-    if ($_SESSION["user"] == $build_owner) {
+    if (isset($_SESSION["user"]) && $_SESSION["user"] == $build_owner) {
       echo "<th>Modify</th>";
     }
 
@@ -92,7 +92,7 @@ function display_parts($build_owner, $conn) {
            "' target='_blank'>Go</a></td>";
 
       // if list belongs to current user, allow parts to be edited and removed
-      if ($_SESSION["user"] == $build_owner) {
+      if (isset($_SESSION["user"]) && $_SESSION["user"] == $build_owner) {
         echo "<td>
               <form action='remove_part.php'>
                 <input type='hidden' name='part_id' value='" . $part["id"] .

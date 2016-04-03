@@ -29,7 +29,7 @@ require "footer.php";
 
 // attempt to modify a part
 function update_part($conn) {
-  if ($_SESSION["user"] != null && $_SESSION["user"] == get_part_owner($conn)) {
+  if (isset($_SESSION["user"]) && $_SESSION["user"] == get_part_owner($conn)) {
     // determine what changes, if any, user wants to make
     if ($_GET["type"] != null && $_GET["name"] != null) {
       $sql = "UPDATE parts SET type = :new_type, name = :new_name WHERE id =

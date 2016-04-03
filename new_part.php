@@ -32,9 +32,9 @@ require "footer.php";
 // try to add part to build
 function add_part($conn) {
   // if user is logged in
-  if ($_SESSION["user"] != null) {
+  if (isset($_SESSION["user"])) {
     // if user has specified a build
-    if ($_SESSION["build_id"] != null) {
+    if (isset($_SESSION["build_id"])) {
       // if user is build owner, safe to add new part
       if ($_SESSION["user"] == get_build_owner($conn)) {
         $sql = "INSERT INTO parts (build_id, type, name)

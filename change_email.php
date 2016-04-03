@@ -10,7 +10,7 @@ session_start();
 
 require "header.php";
 
-if ($_SESSION["user"] != null) {
+if (isset($_SESSION["user"])) {
   echo "<h3>Change Email</h3>
         <form action='process_email_change.php'>
           New Email: <input type='text' name='new_email'><br>

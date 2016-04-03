@@ -30,7 +30,7 @@ try { // to activate user's account
   echo "Error: " . $e->getMessage();
 }
 
-$require "footer.php";
+require "footer.php";
 
 // retrieve token for specified user
 function get_stored_token($conn) {

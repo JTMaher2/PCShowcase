@@ -78,7 +78,8 @@ function change_password($conn) {
   // hash and salt the password
   $hashed_password = password_hash($_POST["password"], PASSWORD_DEFAULT);
 
-  $sql = "UPDATE users SET password = :password WHERE email = :email";
+  $sql = "UPDATE users SET password = :password, token = '' WHERE email =
+          :email";
 
   $stmt = $conn->prepare($sql,
                          array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));

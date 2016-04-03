@@ -11,7 +11,7 @@ session_start();
 require "header.php";
 
 // if user is logged in, and is the owner of this part's build
-if ($_SESSION["user"] != null && $_SESSION["user"] == get_part_owner()) {
+if (isset($_SESSION["user"]) && $_SESSION["user"] == get_part_owner()) {
   echo "<h3>Edit " . $_GET["name"] . "</h3>
         <form action='process_part_edit.php'>
           <input type='hidden' name='part_id' value='" . $_GET["part_id"] . "'>

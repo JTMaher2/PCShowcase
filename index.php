@@ -14,14 +14,14 @@ echo "<h1>Welcome to PC Showcase</h1>
       <h3>Use this site to create custom desktop PCs.</h3>";
 
 // if no one is logged in, display login form
-if (!$_SESSION["user"]) {
+if (!isset($_SESSION["user"])) {
   echo "<form action='login.php' method='post'>
           Email: <input type='text' name='email'><br>
           Password: <input type='password' name='password'><br>
           <input type='submit' value='Login'>
         </form><br>
         <a href='register.php'>Register</a> |
-        <a href='reset_password.html'>Reset Password</a><br>";
+        <a href='reset_password.php'>Reset Password</a><br>";
 }
 
 require "footer.php";

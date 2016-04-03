@@ -10,7 +10,7 @@ session_start();
 
 require "header.php";
 
-if ($_SESSION["user"] != null) {
+if (isset($_SESSION["user"])) {
   echo "<h3>Builds</h3>";
 
   $dsn = "mysql:dbname=pcshowcase;host=localhost";
@@ -21,11 +21,11 @@ if ($_SESSION["user"] != null) {
     $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $sql = "SELECT id, name FROM builds WHERE owner = :email";
+    $sql = "SELECT id, name FROM builds WHERE owner = :user";
 
     $stmt = $conn->prepare($sql,
                            array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-    $stmt->execute(array(":email" => $_SESSION["user"]));
+    $stmt->execute(array(":user" => $_SESSION["user"]));
 
     if ($stmt->rowCount() > 0) {
       echo "<table border='1'><tr><th>Name</th><th>Modify</th></tr>";

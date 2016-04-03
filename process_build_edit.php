@@ -30,7 +30,7 @@ require "footer.php";
 // attempt to update build
 function update_build($conn) {
   // if user is logged in, and is build owner
-  if ($_SESSION["user"] != null && $_SESSION["user"] == get_build_owner()) {
+  if (isset($_SESSION["user"]) && $_SESSION["user"] == get_build_owner($conn)) {
     // if user has specified a build ID and new name
     if ($_GET["build_id"] != null && $_GET["new_name"] != null) {
       $sql = "UPDATE builds SET name = :new_name WHERE id = :build_id";

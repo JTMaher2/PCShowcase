@@ -10,7 +10,7 @@ session_start();
 
 require "header.php";
 
-if ($_SESSION["user"]) {
+if (isset($_SESSION["user"])) {
   echo "<h3>Settings</h3>
         <a href='reset_password.php'>Change Password</a><br>
         <a href='change_email.php'>Change Email</a><br>

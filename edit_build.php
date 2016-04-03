@@ -11,10 +11,12 @@ session_start();
 require "header.php";
 
 // if viewer is logged in, and is build owner
-if ($_SESSION["user"] != null && $_SESSION["user"] == get_build_owner()) {
+if (isset($_SESSION["user"]) && $_SESSION["user"] == get_build_owner()) {
   // allow editing
   echo "<h3>Edit Build</h3>
         <form action='process_build_edit.php'>
+          <input type='hidden' name='build_id' value='" . $_GET["build_id"] .
+          "'>
           Name: <input type='text' name='new_name'><br>
           <input type='submit' value='Submit'>
         </form>";

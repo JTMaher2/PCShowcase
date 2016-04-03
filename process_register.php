@@ -10,6 +10,9 @@ session_start();
 
 require "header.php";
 
+create_db_if_not_exists();
+
+// pcshowcase DB exists, so select it
 $dsn = "mysql:dbname=pcshowcase;host=localhost";
 $username = "root";
 $password = "password";
@@ -17,11 +20,6 @@ $password = "password";
 try { // to add token to user record
   $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-  // if the database does not already exist, create it
-  if (!db_exists($conn)) {
-    create_db($conn);
-  }
 
   // do not proceed if email is already registered
   if (is_registered($_POST["email"], $conn)) {
@@ -43,42 +41,49 @@ try { // to add token to user record
 
 require "footer.php";
 
-// does the PC Showcase database already exist?
-function db_exists($conn) {
-  $sql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE
-          SCHEMA_NAME = 'pcshowcase'";
+// create PC Showcase database if it doesn't already exist
+function create_db_if_not_exists() {
+  // since pcshowcase might not exist, select information_schema
+  $dsn = "mysql:dbname=information_schema;host=localhost";
+  $username = "root";
+  $password = "password";
 
-  $stmt = $conn->prepare($sql);
+  try { // to see if pcshowcase DB already exists
+    $conn = new PDO($dsn, $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  return $stmt->execute(); // 1 if exists, 0 otherwise
-}
+    $sql = "CREATE DATABASE IF NOT EXISTS pcshowcase";
 
-// create PC Showcase database
-function create_db($conn) {
-  $sql = "CREATE DATABASE pcshowcase";
+    $created = $conn->exec($sql);
 
-  $conn->exec($sql);
+    // only make tables if the DB was just created
+    if ($created) {
+      $sql = "CREATE TABLE pcshowcase.users (email VARCHAR(254) PRIMARY KEY,
+                                  activated TINYINT(1),
+                                  password TEXT,
+                                  token TEXT,
+                                  num_builds INT(11) UNSIGNED)";
 
-  $sql = "CREATE TABLE users (email VARCHAR(254) PRIMARY KEY,
-                              activated TINYINT(1),
-                              password TEXT,
-                              token TEXT,
-                              num_builds INT(11) UNSIGNED)";
+      $conn->exec($sql);
 
-  $conn->exec($sql);
+      $sql = "CREATE TABLE pcshowcase.builds (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                                   name TEXT,
+                                   owner VARCHAR(254))";
 
-  $sql = "CREATE TABLE builds (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY_KEY,
-                               name TEXT,
-                               owner VARCHAR(254))";
+      $conn->exec($sql);
 
-  $conn->exec($sql);
+      $sql = "CREATE TABLE pcshowcase.parts (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                                  build_id INT(11) UNSIGNED,
+                                  type TEXT,
+                                  name TEXT)";
 
-  $sql = "CREATE TABLE parts (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY_KEY,
-                              build_id INT(11) UNSIGNED,
-                              type TEXT,
-                              name TEXT)";
+      $conn->exec($sql);
+    }
 
-  $conn->exec($sql);
+    $conn = null;
+  } catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+  }
 }
 
 // check if submitted password is valid
