@@ -31,28 +31,30 @@ require "footer.php";
 function update_part($conn) {
   if (isset($_SESSION["user"]) && $_SESSION["user"] == get_part_owner($conn)) {
     // determine what changes, if any, user wants to make
-    if ($_GET["type"] != null && $_GET["name"] != null) {
-      $sql = "UPDATE parts SET type = :new_type, name = :new_name WHERE id =
-              :id";
-
-      $stmt = $conn->prepare($sql,
-                             array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-      $stmt->execute(array(":new_type" => $_GET["type"],
-                           ":new_name" => $_GET["name"],
-                           ":id" => $_GET["part_id"]));
-    } else if ($_GET["type"] != null) {
+    if ($_GET["type"] != null) {
       $sql = "UPDATE parts SET type = :new_type WHERE id = :id";
 
       $stmt = $conn->prepare($sql,
                              array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
       $stmt->execute(array(":new_type" => $_GET["type"],
                            ":id" => $_GET["part_id"]));
-    } else if ($_GET["name"] != null) {
+    }
+
+    if ($_GET["name"] != null) {
       $sql = "UPDATE parts SET name = :new_name WHERE id = :id";
 
       $stmt = $conn->prepare($sql,
                              array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
       $stmt->execute(array(":new_name" => $_GET["name"],
+                           ":id" => $_GET["part_id"]));
+    }
+
+    if ($_GET["qty"] != null) {
+      $sql = "UPDATE parts SET qty = :new_qty WHERE id = :id";
+
+      $stmt = $conn->prepare($sql,
+                             array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+      $stmt->execute(array(":new_qty" => $_GET["qty"],
                            ":id" => $_GET["part_id"]));
     }
 

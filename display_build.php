@@ -53,6 +53,7 @@ function display_build($conn) {
       // ask for part information
       echo "Type: <input type='text' name='part_type'><br>
             Name: <input type='text' name='part_name'><br>
+            Quantity: <input type='number' name='part_qty'><br>
             <input type='submit' value='Submit'>
             </form>";
     }
@@ -63,14 +64,14 @@ function display_build($conn) {
 
 // display parts for current build
 function display_parts($build_owner, $conn) {
-  $sql = "SELECT id, type, name FROM parts WHERE build_id = " .
+  $sql = "SELECT id, type, name, qty FROM parts WHERE build_id = " .
          $_SESSION["build_id"];
 
   $stmt = $conn->query($sql);
 
   if ($stmt->rowCount() > 0) { // if this build has parts
     echo "<table border='1' style='width:100%'>
-          <tr><th>Type</th><th>Name</th><th>Buy</th>";
+          <tr><th>Type</th><th>Name</th><th>Quantity</th><th>Buy</th>";
 
     // if current user is build creator, allow modification
     if (isset($_SESSION["user"]) && $_SESSION["user"] == $build_owner) {
@@ -88,7 +89,8 @@ function display_parts($build_owner, $conn) {
       $url_part_name = str_replace(' ', '+', strtolower($part["name"]));
 
       echo "<tr><td>" . $part["type"] . "</td><td>" . $part["name"] .
-           "</td><td>" . "<a href='$google_shopping_url" . $url_part_name .
+           "</td><td>" . $part["qty"] . "</td><td>" .
+           "<a href='$google_shopping_url" . $url_part_name .
            "' target='_blank'>Go</a></td>";
 
       // if list belongs to current user, allow parts to be edited and removed

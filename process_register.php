@@ -75,7 +75,8 @@ function create_db_if_not_exists() {
       $sql = "CREATE TABLE pcshowcase.parts (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                                   build_id INT(11) UNSIGNED,
                                   type TEXT,
-                                  name TEXT)";
+                                  name TEXT,
+                                  qty INT(11) UNSIGNED)";
 
       $conn->exec($sql);
     }
