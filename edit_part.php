@@ -16,6 +16,7 @@ if (isset($_SESSION["user"]) && $_SESSION["user"] == get_part_owner()) {
         <form action='process_part_edit.php'>
           <input type='hidden' name='part_id' value='" . $_GET["part_id"] . "'>
           Type: <input type='text' name='type'><br>
+          Manufacturer: <input type='text' name='manufacturer'><br>
           Name: <input type='text' name='name'><br>
           Quantity: <input type='number' name='qty'><br>
           <input type='submit' value='Submit'>

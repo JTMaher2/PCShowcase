@@ -37,12 +37,14 @@ function add_part($conn) {
     if (isset($_SESSION["build_id"])) {
       // if user is build owner, safe to add new part
       if ($_SESSION["user"] == get_build_owner($conn)) {
-        $sql = "INSERT INTO parts (build_id, type, name, qty)
-                VALUES (" . $_SESSION["build_id"] . ", :type, :name, :qty)";
+        $sql = "INSERT INTO parts (build_id, type, manufacturer, name, qty)
+                VALUES (" . $_SESSION["build_id"] . ", :type, :manufacturer,
+                :name, :qty)";
 
         $stmt = $conn->prepare($sql,
                                array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $stmt->execute(array(":type" => $_GET["part_type"],
+                             ":manufacturer" => $_GET["part_manufacturer"],
                              ":name" => $_GET["part_name"],
                              ":qty" => $_GET["part_qty"]));
 

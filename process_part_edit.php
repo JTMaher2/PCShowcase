@@ -40,6 +40,15 @@ function update_part($conn) {
                            ":id" => $_GET["part_id"]));
     }
 
+    if ($_GET["manufacturer"] != null) {
+      $sql = "UPDATE parts SET manufacturer = :new_manufacturer WHERE id = :id";
+
+      $stmt = $conn->prepare($sql,
+                             array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+      $stmt->execute(array(":new_manufacturer" => $_GET["manufacturer"],
+                           ":id" => $_GET["part_id"]));
+    }
+
     if ($_GET["name"] != null) {
       $sql = "UPDATE parts SET name = :new_name WHERE id = :id";
 
