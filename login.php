@@ -33,7 +33,7 @@ try {
     if (password_verify($_POST["password"], $stored_password)) {
       $_SESSION["user"] = $_POST["email"]; // use user's email as ID
 
-      echo "Login successful<br>";
+      header("Location: my_builds.php");
     } else {
       echo "Incorrect password<br>";
     }

@@ -40,15 +40,13 @@ function update_build($conn) {
       $stmt->execute(array(":new_name" => $_GET["new_name"],
                            ":build_id" => $_GET["build_id"]));
 
-      echo "Build updated<br>";
+      header("Location: my_builds.php");
     } else {
       echo "Invalid parameters<br>";
     }
   } else {
     echo "You do not have permission to edit this build.<br>";
   }
-
-  echo "<a href='my_builds.php'>Back</a>";
 }
 
 // get build creator

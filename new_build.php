@@ -40,11 +40,9 @@ function new_build($conn) {
   $stmt->execute(array(":name" => $_GET["name"],
                        ":email" => $_SESSION["user"]));
 
-  echo "New build created successfully<br>";
-
   $build_id = $conn->lastInsertId(); // get this build's ID
 
-  echo "<a href='display_build.php?build_id=" . $build_id . "'>View</a><br>";
+  header("Location: display_build.php?build_id=" . $build_id); // redirect
 }
 
 // increment # of builds that belong to user

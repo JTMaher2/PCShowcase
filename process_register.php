@@ -9,6 +9,7 @@
 session_start();
 
 require "header.php";
+require "vendor/autoload.php"; # for SendGrid
 
 create_db_if_not_exists();
 
@@ -123,26 +124,32 @@ function store_token_in_db($token, $conn) {
 function send_activation_email($conn) {
   // token is hash of current timestamp
   $token = password_hash(date_timestamp_get(date_create()), PASSWORD_DEFAULT);
-
   store_token_in_db($token, $conn);
 
-  $subject = "Activate Your PC Showcase Account";
+  // use SendGrid to send email
+  $sendgrid = new SendGrid(getenv("SENDGRID_USERNAME"),
+                           getenv("SENDGRID_PASSWORD"));
 
-  $message = "<html>
-              <head>
-                <title>PC Showcase Account Activation</title>
-              </head>
-              <body>
-                Click <a href='localhost/activate_account.php?email=" .
-                               $_POST["email"] . "&token=$token'>here</a> to
-                activate your account.
-              </body>
-              </html>";
+  $message = new SendGrid\Email();
+  $message->addTo($_POST["email"])
+        ->setFrom("jtmaher2@gmail.com")
+        ->setSubject("Activate Your PC Showcase Account")
+        ->setText("Visit this link to activate your account:
+                  http://pc-showcase.heroku.com/activate_account.php?email=" .
+                  $_POST["email"] . "&token=$token")
+        ->setHtml("<html>
+                   <head>
+                   <title>PC Showcase Account Activation</title>
+                   </head>
+                   <body>
+                       Click
+                       <a href='http://pc-showcase.heroku.com/activate_account.php?email=" .
+                                $_POST["email"] . "&token=$token'>here</a>
+                       to activate your account.
+                   </body>
+                   </html>");
 
-  $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom:
-              <jtmaher2@gmail.com>\r\n";
-
-  mail($_POST["email"], $subject, $message, $headers); // send
+  $sendgrid->send($message);
 }
 
 // put user in database
