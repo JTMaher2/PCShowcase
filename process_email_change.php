@@ -12,12 +12,15 @@ require "header.php";
 
 // if new username is different from old username
 if ($_GET["new_username"] != $_SESSION["user"]) {
-  $dsn = "mysql:dbname=pcshowcase;host=localhost";
-  $username = "root";
-  $password = "password";
+  $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+  $server = $url["host"];
+  $username = $url["user"];
+  $password = $url["pass"];
+  $db = substr($url["path"], 1);
 
   try {
-    $conn = new PDO($dsn, $username, $password);
+    $conn = new PDO($server, $username, $password, $db);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $sql = "UPDATE users SET name = :new_name WHERE name = :old_name";

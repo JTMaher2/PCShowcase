@@ -43,12 +43,15 @@ require "footer.php";
 
 // store a security token in the users table
 function store_token_in_db($token) {
-  $dsn = "mysql:dbname=pcshowcase;host=localhost";
-  $username = "root";
-  $password = "password";
+  $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+  $server = $url["host"];
+  $username = $url["user"];
+  $password = $url["pass"];
+  $db = substr($url["path"], 1);
 
   try { // to add token to user record
-    $conn = new PDO($dsn, $username, $password);
+    $conn = new PDO($server, $username, $password, $db);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $sql = "UPDATE users SET token = :token WHERE email = :email";

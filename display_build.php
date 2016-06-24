@@ -12,13 +12,16 @@ require "header.php";
 
 $_SESSION["build_id"] = $_GET["build_id"]; // update session var
 
-$dsn = "mysql:dbname=pcshowcase;host=localhost";
-$username = "root";
-$password = "password";
+$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+$server = $url["host"];
+$username = $url["user"];
+$password = $url["pass"];
+$db = substr($url["path"], 1);
 
 try {
   // Create connection
-  $conn = new PDO($dsn, $username, $password);
+  $conn = new PDO($server, $username, $password, $db);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   display_build($conn); // display selected build, if it exists

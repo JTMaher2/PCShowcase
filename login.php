@@ -11,12 +11,15 @@ session_start();
 require "header.php";
 
 // attempt user login
-$dsn = "mysql:dbname=pcshowcase;host=localhost";
-$username = "root";
-$password = "password";
+$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+$server = $url["host"];
+$username = $url["user"];
+$password = $url["pass"];
+$db = substr($url["path"], 1);
 
 try {
-  $conn = new PDO($dsn, $username, $password);
+  $conn = new PDO($server, $username, $password, $db);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   $sql = "SELECT password FROM users WHERE email = :email";

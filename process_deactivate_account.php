@@ -14,12 +14,15 @@ require "header.php";
 if (isset($_SESSION["user"]) && isset($_GET["email"])) {
   // if the submitted email is same as user's email
   if ($_GET["email"] == $_SESSION["user"]) {
-    $dsn = "mysql:dbname=pcshowcase;host=localhost";
-    $username = "root";
-    $password = "password";
+    $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+    $server = $url["host"];
+    $username = $url["user"];
+    $password = $url["pass"];
+    $db = substr($url["path"], 1);
 
     try { // to delete user from DB
-      $conn = new PDO($dsn, $username, $password);
+      $conn = new PDO($server, $username, $password, $db);
       $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
       // get all builds that user has made

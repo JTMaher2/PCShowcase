@@ -12,12 +12,15 @@ require "header.php";
 
 echo "<h3>New Part</h3>";
 
-$dsn = "mysql:host=localhost;dbname=pcshowcase";
-$username = "root";
-$password = "password";
+$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+$server = $url["host"];
+$username = $url["user"];
+$password = $url["pass"];
+$db = substr($url["path"], 1);
 
 try {
-  $conn = new PDO($dsn, $username, $password);
+  $conn = new PDO($server, $username, $password, $db);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   add_part($conn);

@@ -14,12 +14,15 @@ require "vendor/autoload.php"; # for SendGrid
 create_db_if_not_exists();
 
 // pcshowcase DB exists, so select it
-$dsn = "mysql:dbname=pcshowcase;host=localhost";
-$username = "root";
-$password = "password";
+$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+$server = $url["host"];
+$username = $url["user"];
+$password = $url["pass"];
+$db = substr($url["path"], 1);
 
 try { // to add token to user record
-  $conn = new PDO($dsn, $username, $password);
+  $conn = new PDO($server, $username, $password, $db);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   // do not proceed if email is already registered
@@ -45,12 +48,15 @@ require "footer.php";
 // create PC Showcase database if it doesn't already exist
 function create_db_if_not_exists() {
   // since pcshowcase might not exist, select information_schema
-  $dsn = "mysql:dbname=information_schema;host=localhost";
-  $username = "root";
-  $password = "password";
+  $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+  $server = $url["host"];
+  $username = $url["user"];
+  $password = $url["pass"];
+  $db = substr($url["path"], 1);
 
   try { // to see if pcshowcase DB already exists
-    $conn = new PDO($dsn, $username, $password);
+    $conn = new PDO($server, $username, $password, $db);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $sql = "CREATE DATABASE IF NOT EXISTS pcshowcase";
@@ -135,7 +141,7 @@ function send_activation_email($conn) {
         ->setFrom("jtmaher2@gmail.com")
         ->setSubject("Activate Your PC Showcase Account")
         ->setText("Visit this link to activate your account:
-                  http://pc-showcase.heroku.com/activate_account.php?email=" .
+                  http://pc-showcase.herokuapp.com/activate_account.php?email=" .
                   $_POST["email"] . "&token=$token")
         ->setHtml("<html>
                    <head>
@@ -143,7 +149,7 @@ function send_activation_email($conn) {
                    </head>
                    <body>
                        Click
-                       <a href='http://pc-showcase.heroku.com/activate_account.php?email=" .
+                       <a href='http://pc-showcase.herokuapp.com/activate_account.php?email=" .
                                 $_POST["email"] . "&token=$token'>here</a>
                        to activate your account.
                    </body>

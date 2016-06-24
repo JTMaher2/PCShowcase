@@ -29,12 +29,15 @@ if (isset($_SESSION["user"]) && $_SESSION["user"] == get_part_owner()) {
 
 // get owner that corresponds to unique part ID
 function get_part_owner() {
-  $dsn = "mysql:dbname=pcshowcase;host=localhost";
-  $username = "root";
-  $password = "password";
+  $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+  $server = $url["host"];
+  $username = $url["user"];
+  $password = $url["pass"];
+  $db = substr($url["path"], 1);
 
   try {
-    $conn = new PDO($dsn, $username, $password);
+    $conn = new PDO($server, $username, $password, $db);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // get build ID

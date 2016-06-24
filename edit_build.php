@@ -28,12 +28,15 @@ require "footer.php";
 
 // get owner of a build
 function get_build_owner() {
-  $dsn = "mysql:dbname=pcshowcase;host=localhost";
-  $username = "root";
-  $password = "password";
+  $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+  $server = $url["host"];
+  $username = $url["user"];
+  $password = $url["pass"];
+  $db = substr($url["path"], 1);
 
   try {
-    $conn = new PDO($dsn, $username, $password);
+    $conn = new PDO($server, $username, $password, $db);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $sql = "SELECT owner FROM builds WHERE id = :build_id";
