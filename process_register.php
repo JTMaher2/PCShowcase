@@ -49,10 +49,9 @@ function create_db_if_not_exists() {
   // since pcshowcase might not exist, select information_schema
   $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
-  $server = $url["host"];
+  $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
   $username = $url["user"];
   $password = $url["pass"];
-  $db = substr($url["path"], 1);
 
   try { // to see if pcshowcase DB already exists
     $conn = new PDO($dsn, $username, $password);
