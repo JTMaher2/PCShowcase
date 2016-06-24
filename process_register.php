@@ -11,7 +11,7 @@ session_start();
 require "header.php";
 require "vendor/autoload.php"; # for SendGrid
 
-create_db_if_not_exists();
+create_tables(); // create tables if they don't already exist
 
 // pcshowcase DB exists, so select it
 $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
@@ -44,8 +44,8 @@ try { // to add token to user record
 
 require "footer.php";
 
-// create PC Showcase database if it doesn't already exist
-function create_db_if_not_exists() {
+// create tables if they don't already exist
+function create_tables() {
   // since pcshowcase might not exist, select information_schema
   $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
@@ -53,17 +53,17 @@ function create_db_if_not_exists() {
   $username = $url["user"];
   $password = $url["pass"];
 
-  try { // to see if pcshowcase DB already exists
+  try { // to see if tables already exist
     $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $sql = "CREATE DATABASE IF NOT EXISTS pcshowcase";
+    $sql = "SELECT 1 FROM users LIMIT 1";
 
-    $created = $conn->exec($sql);
+    $tables_exist = $conn->exec($sql);
 
-    // only make tables if the DB was just created
-    if ($created) {
-      $sql = "CREATE TABLE pcshowcase.users (email VARCHAR(254) PRIMARY KEY,
+    // only make tables if they don't already exist
+    if (!$tables_exist) {
+      $sql = "CREATE TABLE users (email VARCHAR(254) PRIMARY KEY,
                                   activated TINYINT(1),
                                   password TEXT,
                                   token TEXT,
@@ -71,13 +71,13 @@ function create_db_if_not_exists() {
 
       $conn->exec($sql);
 
-      $sql = "CREATE TABLE pcshowcase.builds (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      $sql = "CREATE TABLE builds (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                                    name TEXT,
                                    owner VARCHAR(254))";
 
       $conn->exec($sql);
 
-      $sql = "CREATE TABLE pcshowcase.parts (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      $sql = "CREATE TABLE parts (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                                   build_id INT(11) UNSIGNED,
                                   type TEXT,
                                   manufacturer TEXT,
