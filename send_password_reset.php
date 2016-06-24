@@ -45,13 +45,12 @@ require "footer.php";
 function store_token_in_db($token) {
   $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
-  $server = $url["host"];
+  $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
   $username = $url["user"];
   $password = $url["pass"];
-  $db = substr($url["path"], 1);
 
   try { // to add token to user record
-    $conn = new PDO($server, $username, $password, $db);
+    $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $sql = "UPDATE users SET token = :token WHERE email = :email";

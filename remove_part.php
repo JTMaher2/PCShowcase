@@ -14,13 +14,12 @@ echo "<h3>Remove Part</h3>";
 
 $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
-$server = $url["host"];
+$dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
 $username = $url["user"];
 $password = $url["pass"];
-$db = substr($url["path"], 1);
 
 try {
-  $conn = new PDO($server, $username, $password, $db);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   // if the current user is the owner of the build, allow part deletion

@@ -16,13 +16,12 @@ create_db_if_not_exists();
 // pcshowcase DB exists, so select it
 $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
-$server = $url["host"];
+$dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
 $username = $url["user"];
 $password = $url["pass"];
-$db = substr($url["path"], 1);
 
 try { // to add token to user record
-  $conn = new PDO($server, $username, $password, $db);
+  $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   // do not proceed if email is already registered
@@ -56,7 +55,7 @@ function create_db_if_not_exists() {
   $db = substr($url["path"], 1);
 
   try { // to see if pcshowcase DB already exists
-    $conn = new PDO($server, $username, $password, $db);
+    $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $sql = "CREATE DATABASE IF NOT EXISTS pcshowcase";

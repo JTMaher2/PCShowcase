@@ -16,13 +16,12 @@ if (isset($_SESSION["user"]) && isset($_GET["email"])) {
   if ($_GET["email"] == $_SESSION["user"]) {
     $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
-    $server = $url["host"];
+    $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
     $username = $url["user"];
     $password = $url["pass"];
-    $db = substr($url["path"], 1);
 
     try { // to delete user from DB
-      $conn = new PDO($server, $username, $password, $db);
+      $conn = new PDO($dsn, $username, $password);
       $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
       // get all builds that user has made
