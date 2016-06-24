@@ -174,7 +174,7 @@ function register_user($conn) {
   $guest_email = "guest@example.com";
   $guest_password = "password1!";
 
-  $sql = "INSERT INTO users (email, password) VALUES (" . $guest_email . ", " . $guest_password . ")";
+  $sql = "INSERT INTO users (email, password) VALUES ('" . $guest_email . "', '" . $guest_password . "')";
 
   $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
   $stmt->execute();
