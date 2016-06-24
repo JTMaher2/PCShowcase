@@ -59,7 +59,11 @@ function create_tables() {
 
     $sql = "SELECT 1 FROM users LIMIT 1";
 
-    $tables_exist = $conn->exec($sql);
+    $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    $stmt->execute($sql);
+
+    // 1 if they exist, 0 if they do not exist
+    $tables_exist = $stmt->fetch()["1"];
 
     // only make tables if they don't already exist
     if (!$tables_exist) {
