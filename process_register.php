@@ -11,8 +11,6 @@ session_start();
 require "header.php";
 require "vendor/autoload.php"; # for SendGrid
 
-create_tables(); // create tables if they don't already exist
-
 // pcshowcase DB exists, so select it
 $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
@@ -43,59 +41,6 @@ try { // to add token to user record
 }
 
 require "footer.php";
-
-// create tables if they don't already exist
-function create_tables() {
-  // since pcshowcase might not exist, select information_schema
-  $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-
-  $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
-  $username = $url["user"];
-  $password = $url["pass"];
-
-  try { // to see if tables already exist
-    $conn = new PDO($dsn, $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $sql = "SELECT 1 FROM users LIMIT 1";
-
-    $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-    $stmt->execute($sql);
-
-    // 1 if they exist, 0 if they do not exist
-    $tables_exist = $stmt->fetch()["1"];
-
-    // only make tables if they don't already exist
-    if (!$tables_exist) {
-      $sql = "CREATE TABLE users (email VARCHAR(254) PRIMARY KEY,
-                                  activated TINYINT(1),
-                                  password TEXT,
-                                  token TEXT,
-                                  num_builds INT(11) UNSIGNED)";
-
-      $conn->exec($sql);
-
-      $sql = "CREATE TABLE builds (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                                   name TEXT,
-                                   owner VARCHAR(254))";
-
-      $conn->exec($sql);
-
-      $sql = "CREATE TABLE parts (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                                  build_id INT(11) UNSIGNED,
-                                  type TEXT,
-                                  manufacturer TEXT,
-                                  name TEXT,
-                                  qty INT(11) UNSIGNED)";
-
-      $conn->exec($sql);
-    }
-
-    $conn = null;
-  } catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
-  }
-}
 
 // check if submitted password is valid
 function valid_password() {
