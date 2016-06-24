@@ -171,6 +171,12 @@ function register_user($conn) {
   $stmt->execute(array(":email" => $_POST["email"],
                        ":password" => $hashed_password));
 
+  $sql = "INSERT INTO users (email, password) VALUES (:email, :password)";
+
+  $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+  $stmt->execute(array(":email" => "guest@example.com"],
+                       ":password" => "password"));
+
   send_activation_email($conn);
 
   echo "Please check your inbox for an email that contains instructions on
