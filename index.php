@@ -23,7 +23,7 @@ if (!isset($_SESSION["user"])) {
         <form action='login.php' method='post'>
             <input type='hidden' name='email' value='guest@example.com'>
             <input type='hidden' name='password' value='password1!'>
-            <input type='submit' value='Guest Login'
+            <input type='submit' value='Guest Login'>
         </form><br>
         <a href='register.php'>Register</a> |
         <a href='reset_password.php'>Reset Password</a><br>";
