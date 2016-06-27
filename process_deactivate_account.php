@@ -12,8 +12,8 @@ require "header.php";
 
 // if user is logged in, and has submitted an email address
 if (isset($_SESSION["user"]) && isset($_GET["email"])) {
-  // if the submitted email is same as user's email
-  if ($_GET["email"] == $_SESSION["user"]) {
+  // if the submitted email is same as user's email, and the user is not guest
+  if ($_GET["email"] == $_SESSION["user"] && $_SESSION["user"] != "guest@example.com") {
     $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
     $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);

@@ -10,21 +10,26 @@ session_start();
 
 require "header.php";
 
-$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+if (isset($_SESSION["user"])) {
+    // do not allow guest to change password
+    if ($_SESSION["user"] != 'guest@example.com') {
+        $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
-$dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
-$username = $url["user"];
-$password = $url["pass"];
+        $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
+        $username = $url["user"];
+        $password = $url["pass"];
 
-try {
-  $conn = new PDO($dsn, $username, $password);
-  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+          $conn = new PDO($dsn, $username, $password);
+          $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  validate_password($conn);
+          validate_password($conn);
 
-  $conn = null;
-} catch (PDOException $e) {
-  echo "Error: " . $e->getMessage();
+          $conn = null;
+        } catch (PDOException $e) {
+          echo "Error: " . $e->getMessage();
+        }
+    }
 }
 
 require "footer.php";
