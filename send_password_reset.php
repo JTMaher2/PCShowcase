@@ -17,29 +17,36 @@ if ($_POST["email"] != 'guest@example.com') {
 
     store_token_in_db($token);
 
-    $subject = "PC Showcase Password Reset";
+    $sendgrid = new SendGrid(getenv("SENDGRID_USERNAME"),
+                               getenv("SENDGRID_PASSWORD"));
 
-    $message = "<html>
-                <head>
-                  <title>Password Reset</title>
-                </head>
-                <body>
-                  Click <a href='localhost/ask_for_new_password.php?email=" .
-                                 $_POST["email"] . "&token=$token'>here</a>
-                  to reset your PC Showcase password.<br>
-                  If you did not request for your password to be reset, please
-                  ignore this message.
-                </body>
-                </html>";
+    $message = new SendGrid\Email();
 
-    $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom:
-                <jtmaher2@gmail.com>\r\n";
+    $message->addTo($_POST["email"])
+            ->setFrom("jtmaher2@gmail.com")
+            ->setSubject("PC Showcase Password Reset")
+            ->setText("Click
+                      http://pc-showcase.herokuapp.com/ask_for_new_password.php?email="
+                      . $_POST["email"] . "&token=" . $token . " to reset your"
+                      . " PC Showcase password. If you did not request for your"
+                      " password to be reset, please ignore this message.")
+            ->setHtml("<html>
+                       <head>
+                         <title>Password Reset</title>
+                       </head>
+                       <body>
+                         Click <a href='http://pc-showcase.herokuapp.com/ask_for_new_password.php?email=" .
+                                        $_POST["email"] . "&token=$token'>here</a>
+                         to reset your PC Showcase password.<br>
+                         If you did not request for your password to be reset,
+                          please ignore this message.
+                      </body>
+                      </html>");
 
     // send email
-    mail($_POST["email"], $subject, $message, $headers);
+    $sendgrid->send($message);
 
-    echo "Please check your inbox for instructions on how to reset your password.
-          <br>";
+    echo "Please check your inbox for instructions on how to reset your password.<br>";
 }
 
 require "footer.php";
