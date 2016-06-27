@@ -12,7 +12,7 @@ require "header.php";
 
 if (isset($_SESSION["user"])) {
     // do not let guest deactivate account
-    if ($SESSION["user"] != "guest@example.com") {
+    if ($_SESSION["user"] != "guest@example.com") {
       echo "If you would like to deactivate your account, and delete all builds
             associated with it, please type your email address:
             <br>
