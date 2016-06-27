@@ -20,6 +20,11 @@ if (!isset($_SESSION["user"])) {
           Password: <input type='password' name='password'><br>
           <input type='submit' value='Login'>
         </form><br>
+        <form action='login.php' method='post'>
+            <input type='hidden' name='email' value='guest@example.com'>
+            <input type='hidden' name='password' value='password1!'>
+            <input type='submit' value='Guest Login'
+        </form><br>
         <a href='register.php'>Register</a> |
         <a href='reset_password.php'>Reset Password</a><br>";
 }
