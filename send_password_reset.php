@@ -10,38 +10,36 @@ session_start();
 
 require "header.php";
 
-if (isset($_SESSION["user"])) {
-    // do not allow guest to reset password
-    if ($_SESSION["user"] != 'guest@example.com') {
-        // token is a hash of current timestamp
-        $token = password_hash(date_timestamp_get(date_create()), PASSWORD_DEFAULT);
+// do not allow guest to reset password
+if ($_POST["email"] != 'guest@example.com') {
+    // token is a hash of current timestamp
+    $token = password_hash(date_timestamp_get(date_create()), PASSWORD_DEFAULT);
 
-        store_token_in_db($token);
+    store_token_in_db($token);
 
-        $subject = "PC Showcase Password Reset";
+    $subject = "PC Showcase Password Reset";
 
-        $message = "<html>
-                    <head>
-                      <title>Password Reset</title>
-                    </head>
-                    <body>
-                      Click <a href='localhost/ask_for_new_password.php?email=" .
-                                     $_POST["email"] . "&token=$token'>here</a>
-                      to reset your PC Showcase password.<br>
-                      If you did not request for your password to be reset, please
-                      ignore this message.
-                    </body>
-                    </html>";
+    $message = "<html>
+                <head>
+                  <title>Password Reset</title>
+                </head>
+                <body>
+                  Click <a href='localhost/ask_for_new_password.php?email=" .
+                                 $_POST["email"] . "&token=$token'>here</a>
+                  to reset your PC Showcase password.<br>
+                  If you did not request for your password to be reset, please
+                  ignore this message.
+                </body>
+                </html>";
 
-        $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom:
-                    <jtmaher2@gmail.com>\r\n";
+    $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom:
+                <jtmaher2@gmail.com>\r\n";
 
-        // send email
-        mail($_POST["email"], $subject, $message, $headers);
+    // send email
+    mail($_POST["email"], $subject, $message, $headers);
 
-        echo "Please check your inbox for instructions on how to reset your password.
-              <br>";
-  }
+    echo "Please check your inbox for instructions on how to reset your password.
+          <br>";
 }
 
 require "footer.php";
