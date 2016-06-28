@@ -110,7 +110,7 @@ function display_parts($build_owner, $conn) {
               <div class='form-group has-feedback'>
                 <form action='remove_part.php'>
                   <input type='hidden' name='part_id' value='" . $part["id"] . "'>
-                  <input type='submit' class='btn btn-danger form-control'>
+                  <input type='submit' value='' class='btn btn-danger form-control'>
                   <i class='glyphicon glyphicon-remove form-control-feedback'></i>
                 </form>
               </div>
@@ -118,7 +118,7 @@ function display_parts($build_owner, $conn) {
                 <form action='edit_part.php'>
                   <input type='hidden' name='part_id' value='" . $part["id"] . "'>
                   <input type='hidden' name='name' value='" . $part["name"] . "'>
-                  <input type='submit' class='btn btn-warning form-control'>
+                  <input type='submit' value='' class='btn btn-warning form-control'>
                   <i class='glyphicon glyphicon-pencil form-control-feedback'></i>
                 </form>
               </div>

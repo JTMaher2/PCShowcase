@@ -15,7 +15,7 @@ require "header.php";
 
 echo "<div class='container'><div class='center jumbotron'>";
 
-echo "<h1>Reset Password</h1>
+echo "<h3>Reset Password</h3>
       <form action='send_password_reset.php' method='post'>
           Email Address: <input type='text' name='email'><br>
           <input type='submit' value='Submit' class='btn btn-large btn-primary'>

@@ -18,8 +18,8 @@ echo "<div class='container'><div class='center jumbotron'>";
 if (isset($_SESSION["user"])) {
     // do not let guest deactivate account
     if ($_SESSION["user"] != "guest@example.com") {
-      echo "If you would like to deactivate your account, and delete all builds
-            associated with it, please type your email address:
+      echo "<h3>If you would like to deactivate your account, and delete all builds
+            associated with it, please type your email address:</h3>
             <br>
             <form action='process_deactivate_account.php'>
               <input type='text' name='email'><br>
