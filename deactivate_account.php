@@ -13,7 +13,7 @@ session_start();
 
 require "header.php";
 
-echo "<div class='container'>";
+echo "<div class='container'><div class='center jumbotron'>";
 
 if (isset($_SESSION["user"])) {
     // do not let guest deactivate account
@@ -30,7 +30,7 @@ if (isset($_SESSION["user"])) {
   header("Location: index.php");
 }
 
-echo "</div>";
+echo "</div></div>";
 
 require "footer.php";
 ?>

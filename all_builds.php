@@ -13,7 +13,7 @@ session_start();
 
 require "header.php";
 
-echo "<div class='container'>";
+echo "<div class='container'><div class='center jumbotron'>";
 
 echo "<h3>All Builds</h3>";
 
@@ -39,7 +39,7 @@ try { // to display all builds
   echo "Error: " . $e->getMessage();
 }
 
-echo "</div>";
+echo "</div></div>";
 
 require "footer.php";
 ?>

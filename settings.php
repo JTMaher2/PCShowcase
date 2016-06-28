@@ -13,7 +13,7 @@ session_start();
 
 require "header.php";
 
-echo "<div class='container'>";
+echo "<div class='container'><div class='center jumbotron'>";
 
 if (isset($_SESSION["user"])) {
   // do not allow guest account to be modified
@@ -25,7 +25,7 @@ if (isset($_SESSION["user"])) {
   }
 }
 
-echo "</div>";
+echo "</div></div>";
 
 require "footer.php";
 ?>

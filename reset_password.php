@@ -13,7 +13,7 @@ session_start();
 
 require "header.php";
 
-echo "<div class='container'>";
+echo "<div class='container'><div class='center jumbotron'>";
 
 echo "<h1>Reset Password</h1>
       <form action='send_password_reset.php' method='post'>
@@ -21,7 +21,7 @@ echo "<h1>Reset Password</h1>
           <input type='submit' value='Submit' class='btn btn-large btn-primary'>
       </form>";
 
-echo "</div>";
+echo "</div></div>";
 
 require "footer.php";
 ?>

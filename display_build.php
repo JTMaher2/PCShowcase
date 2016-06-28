@@ -107,18 +107,21 @@ function display_parts($build_owner, $conn) {
       // if list belongs to current user, allow parts to be edited and removed
       if (isset($_SESSION["user"]) && $_SESSION["user"] == $build_owner) {
         echo "<td>
-              <form action='remove_part.php'>
-                <input type='hidden' name='part_id' value='" . $part["id"] .
-                "'>
-                <input type='submit' value='X' class='btn btn-large btn-danger'>
-              </form>
-              <form action='edit_part.php'>
-                <input type='hidden' name='part_id' value='" . $part["id"] .
-                "'>
-                <input type='hidden' name='name' value='" . $part["name"] .
-                "'>
-                <input type='submit' value='Edit' class='btn btn-large btn-warning'>
-              </form>
+              <div class='form-group has-feedback'>
+                <form action='remove_part.php'>
+                  <input type='hidden' name='part_id' value='" . $part["id"] . "'>
+                  <input type='submit' class='btn btn-danger form-control'>
+                  <i class='glyphicon glyphicon-remove form-control-feedback'></i>
+                </form>
+              </div>
+              <div class='form-group has-feedback'>
+                <form action='edit_part.php'>
+                  <input type='hidden' name='part_id' value='" . $part["id"] . "'>
+                  <input type='hidden' name='name' value='" . $part["name"] . "'>
+                  <input type='submit' class='btn btn-warning form-control'>
+                  <i class='glyphicon glyphicon-pencil form-control-feedback'></i>
+                </form>
+              </div>
               </td></tr>";
       }
     }
