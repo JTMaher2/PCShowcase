@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Send Password Reset Email</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <?php
 session_start();
 
 require "header.php";
+
+echo "<div class='container'>";
 
 // do not allow guest to reset password
 if ($_POST["email"] != 'guest@example.com') {
@@ -48,6 +53,8 @@ if ($_POST["email"] != 'guest@example.com') {
 
     echo "Please check your inbox for instructions on how to reset your password.<br>";
 }
+
+echo "</div>";
 
 require "footer.php";
 

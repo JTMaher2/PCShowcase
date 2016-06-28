@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Edit Part</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <?php
 session_start();
 
 require "header.php";
+
+echo "<div class='container'>";
 
 // if user is logged in, and is the owner of this part's build
 if (isset($_SESSION["user"]) && $_SESSION["user"] == get_part_owner()) {
@@ -19,13 +24,15 @@ if (isset($_SESSION["user"]) && $_SESSION["user"] == get_part_owner()) {
           Manufacturer: <input type='text' name='manufacturer'><br>
           Name: <input type='text' name='name'><br>
           Quantity: <input type='number' name='qty'><br>
-          <input type='submit' value='Submit'>
+          <input type='submit' value='Submit' class='btn btn-large btn-primary'>
         </form><br>
         <a href='display_build.php?build_id=" . $_SESSION["build_id"] .
-                   "'>Back</a><br>";
+                   "' class='btn btn-large btn-primary'>Back</a><br>";
 } else {
   echo "You do not have permission to edit this part.<br>";
 }
+
+echo "</div>";
 
 // get owner that corresponds to unique part ID
 function get_part_owner() {

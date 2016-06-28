@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Process Build Edit</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <?php
@@ -16,6 +19,8 @@ $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
 $username = $url["user"];
 $password = $url["pass"];
 
+echo "<div class='container'>";
+
 try {
   $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -26,6 +31,8 @@ try {
 } catch (PDOException $e) {
   echo "Connection failed: " . $e->getMessage();
 }
+
+echo "</div>";
 
 require "footer.php";
 

@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My PC Builds</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <?php
 session_start();
 
 require "header.php";
+
+echo "<div class='container'>";
 
 if (isset($_SESSION["user"])) {
   echo "<h3>Builds</h3>";
@@ -40,12 +45,12 @@ if (isset($_SESSION["user"])) {
                 <form action='remove_build.php'>
                   <input type='hidden' name='build_id' value='" . $build["id"]
                   . "'>
-                  <input type='submit' value='X'>
+                  <input type='submit' value='X' class='btn btn-large btn-danger'>
                 </form>
                 <form action='edit_build.php'>
                   <input type='hidden' name='build_id' value='" . $build["id"]
                   . "'>
-                  <input type='submit' value='Edit'>
+                  <input type='submit' value='Edit' class='btn btn-large btn-warning'>
                 </form></td></tr>";
       }
 
@@ -63,11 +68,13 @@ if (isset($_SESSION["user"])) {
   echo "<strong>New build:</strong>
         <form action='new_build.php'>
           Name: <input type='text' name='name'><br>
-          <input type='submit' value='Create'>
+          <input type='submit' value='Create' class='btn btn-large btn-success'>
         </form><br>";
 } else {
   echo "You are not logged in.<br>";
 }
+
+echo "</div>"
 
 require "footer.php";
 ?>

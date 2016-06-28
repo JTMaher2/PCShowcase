@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Process Part Edit</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <?php
@@ -16,6 +19,8 @@ $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
 $username = $url["user"];
 $password = $url["pass"];
 
+echo "<div class='container'>";
+
 try {
   $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -26,6 +31,8 @@ try {
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
 }
+
+echo "</div>";
 
 require "footer.php";
 
@@ -75,7 +82,7 @@ function update_part($conn) {
   }
 
   echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
-       "'>Back</a><br>";
+       "' class='btn btn-large btn-primary'>Back</a><br>";
 }
 
 // get owner that corresponds to unique part ID

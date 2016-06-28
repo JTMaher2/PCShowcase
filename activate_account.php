@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Activate Account</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <?php
@@ -20,6 +23,8 @@ try { // to activate user's account
   $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+  echo "<div class='container'>";
+
   // if the provided token is the same as the token in the database
   if ($_GET["token"] == get_stored_token($conn)) {
     activate_account($conn); // it's safe to activate
@@ -31,6 +36,8 @@ try { // to activate user's account
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
 }
+
+echo "</div>";
 
 require "footer.php";
 

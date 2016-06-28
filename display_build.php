@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Current Build</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <?php
@@ -18,6 +21,8 @@ $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
 $username = $url["user"];
 $password = $url["pass"];
 
+echo "<div class='container'>";
+
 try {
   // Create connection
   $conn = new PDO($dsn, $username, $password);
@@ -29,6 +34,8 @@ try {
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
 }
+
+echo "</div>";
 
 require "footer.php";
 
@@ -57,7 +64,7 @@ function display_build($conn) {
             Manufacturer: <input type='text' name='part_manufacturer'><br>
             Name: <input type='text' name='part_name'><br>
             Quantity: <input type='number' name='part_qty'><br>
-            <input type='submit' value='Submit'>
+            <input type='submit' value='Submit' class='btn btn-large btn-primary'>
             </form>";
     }
   } else { // build doesn't exist
@@ -103,14 +110,14 @@ function display_parts($build_owner, $conn) {
               <form action='remove_part.php'>
                 <input type='hidden' name='part_id' value='" . $part["id"] .
                 "'>
-                <input type='submit' value='X'>
+                <input type='submit' value='X' class='btn btn-large btn-danger'>
               </form>
               <form action='edit_part.php'>
                 <input type='hidden' name='part_id' value='" . $part["id"] .
                 "'>
                 <input type='hidden' name='name' value='" . $part["name"] .
                 "'>
-                <input type='submit' value='Edit'>
+                <input type='submit' value='Edit' class='btn btn-large btn-warning'>
               </form>
               </td></tr>";
       }

@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Edit Build</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <?php
 session_start();
 
 require "header.php";
+
+echo "<div class='container'>";
 
 // if viewer is logged in, and is build owner
 if (isset($_SESSION["user"]) && $_SESSION["user"] == get_build_owner()) {
@@ -18,11 +23,13 @@ if (isset($_SESSION["user"]) && $_SESSION["user"] == get_build_owner()) {
           <input type='hidden' name='build_id' value='" . $_GET["build_id"] .
           "'>
           Name: <input type='text' name='new_name'><br>
-          <input type='submit' value='Submit'>
+          <input type='submit' value='Submit' class='btn btn-large btn-primary'>
         </form>";
 } else {
   echo "You do not have permission to edit this build.<br>";
 }
+
+echo "</div>";
 
 require "footer.php";
 

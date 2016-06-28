@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Process Email Change</title>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Process Email Change</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <?php
 session_start();
 
 require "header.php";
+
+echo "<div class='container'>";
 
 if (isset($_SESSION["user"])) {
     // do not allow guest to change email
@@ -40,10 +45,12 @@ if (isset($_SESSION["user"])) {
           }
         } else {
           echo "Please enter a different username than your current one.<br>
-                <a href='change_username.php'>Back</a>";
+                <a href='change_username.php' class='btn btn-large btn-primary'>Back</a>";
         }
     }
 }
+
+echo "</div>";
 
 require "footer.php";
 ?>

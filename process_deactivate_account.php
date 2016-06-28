@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Deactivate Account</title>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deactivate Account</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <?php
 session_start();
 
 require "header.php";
+
+echo "<div class='container'>";
 
 // if user is logged in, and has submitted an email address
 if (isset($_SESSION["user"]) && isset($_GET["email"])) {
@@ -55,9 +60,11 @@ if (isset($_SESSION["user"]) && isset($_GET["email"])) {
     header("Location: index.php");
   } else {
     echo "Submitted email address does not match<br>
-          <a href='deactivate_account.php'>Back</a>";
+          <a href='deactivate_account.php' class='btn btn-large btn-primary'>Back</a>";
   }
 }
+
+echo "</div>";
 
 require "footer.php";
 ?>

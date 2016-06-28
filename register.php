@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Register</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <style>
   .tooltip {
@@ -34,7 +37,7 @@
 session_start();
 require "header.php";
 ?>
-
+<div class="container">
 <h3>Register</h3>
 
 <form action="process_register.php" method="post">
@@ -47,9 +50,10 @@ require "header.php";
 
   <input type="password" name="password"><br>
   Confirm password: <input type="password" name="confirm_password"><br>
-  <input type="submit" value="Submit">
+  <input type="submit" value="Submit" class="btn btn-large btn-primary">
 </form><br>
 
+</div>
 <?php require "footer.php"; ?>
 </body>
 </html>

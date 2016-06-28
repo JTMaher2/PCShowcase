@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>All Builds</title>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>All Builds</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <?php
 session_start();
 
 require "header.php";
+
+echo "<div class='container'>";
 
 echo "<h3>All Builds</h3>";
 
@@ -33,6 +38,8 @@ try { // to display all builds
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
 }
+
+echo "</div>";
 
 require "footer.php";
 ?>

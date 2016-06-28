@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Remove Part</title>
+  <link href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <?php
 session_start();
 
 require "header.php";
+
+echo "<div class='container'>";
 
 echo "<h3>Remove Part</h3>";
 
@@ -36,7 +41,9 @@ try {
 
 // link back to build
 echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
-     "'>Back</a><br>";
+     "' class='btn btn-large btn-primary'>Back</a><br>";
+
+echo "</div>";
 
 require "footer.php";
 
