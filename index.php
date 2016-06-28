@@ -12,6 +12,7 @@
 session_start();
 
 require "header.php";
+require "vendor/autoload.php";
 
 echo "<div class='container'>
         <div class='center jumbotron'>
