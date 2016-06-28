@@ -42,16 +42,19 @@ if (isset($_SESSION["user"])) {
         echo "<tr><td><a href='display_build.php?build_id=" . $build["id"] .
              "'>" . $build["name"] . "</a></td>
               <td>
-                <form action='remove_build.php'>
-                  <input type='hidden' name='build_id' value='" . $build["id"]
-                  . "'>
-                  <input type='submit' value='X' class='btn btn-large btn-danger'>
-                </form>
-                <form action='edit_build.php'>
-                  <input type='hidden' name='build_id' value='" . $build["id"]
-                  . "'>
-                  <input type='submit' value='Edit' class='btn btn-large btn-warning'>
-                </form></td></tr>";
+                <div class='form-group has-feedback'>
+                  <form action='remove_build.php'>
+                    <input type='hidden' name='build_id' value='" . $build["id"] . "'>
+                    <input type='submit' value='X' class='btn btn-danger form-control'>
+                    <i class='glyphicon glyphicon-remove form-control-feedback'></i>
+                  </form>
+                </div>
+                <div class='form-group has-feedback'>
+                  <form action='edit_build.php'>
+                    <input type='hidden' name='build_id' value='" . $build["id"] . "'>
+                    <input type='submit' value='Edit' class='btn btn-warning form-control'>
+                    <i class='glyphicon glyphicon-pencil form-control-feedback'></i>
+                  </form></div></td></tr>";
       }
 
       echo "</table><br>";
