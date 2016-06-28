@@ -1,6 +1,5 @@
 {
     "require": {
-        "sendgrid/sendgrid": "~4.0",
-        "twbs/bootstrap": "^3.3"
+        "sendgrid/sendgrid": "~4.0"
     }
 }
