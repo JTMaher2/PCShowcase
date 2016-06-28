@@ -74,7 +74,7 @@ if (isset($_SESSION["user"])) {
   echo "You are not logged in.<br>";
 }
 
-echo "</div>"
+echo "</div>";
 
 require "footer.php";
 ?>
