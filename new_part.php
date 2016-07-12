@@ -17,12 +17,12 @@ echo "<div class='container'>";
 
 echo "<br><br><br><h3>New Part</h3>";
 
-// $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-//
-// $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
-// $username = $url["user"];
-// $password = $url["pass"];
-//
+$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+$dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
+$username = $url["user"];
+$password = $url["pass"];
+
 // try {
 //   $conn = new PDO($dsn, $username, $password);
 //   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -33,6 +33,7 @@ echo "<br><br><br><h3>New Part</h3>";
 // } catch (PDOException $e) {
 //   echo "Error: " . $e->getMessage();
 // }
+
 //
 // // link back to build
 // echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
