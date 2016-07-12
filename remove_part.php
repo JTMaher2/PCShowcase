@@ -31,16 +31,16 @@ try {
   if (get_build_owner($conn) == $_SESSION["user"]) {
     delete_part($conn);
   } else {
-    echo "You do not have permission to delete this part.<br>";
+    echo "<br>You do not have permission to delete this part.<br>";
   }
 
   $conn = null;
 } catch (PDOException $e) {
-  echo "Error: " . $e->getMessage() . "<br>";
+  echo "<br>Error: " . $e->getMessage() . "<br>";
 }
 
 // link back to build
-echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
+echo "<br><a href='display_build.php?build_id=" . $_SESSION["build_id"] .
      "' class='btn btn-large btn-primary'>Back</a><br>";
 
 echo "</div>";

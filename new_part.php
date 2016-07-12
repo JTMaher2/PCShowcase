@@ -31,11 +31,11 @@ try {
 
   $conn = null;
 } catch (PDOException $e) {
-  echo "Error: " . $e->getMessage();
+  echo "<br>Error: " . $e->getMessage();
 }
 
 // link back to build
-echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
+echo "<br><a href='display_build.php?build_id=" . $_SESSION["build_id"] .
      "' class='btn btn-large btn-primary'>Back</a><br>";
 
 echo "</div>"
@@ -61,10 +61,10 @@ function add_part($conn) {
 
       header("Location: display_build.php?build_id=" . $_SESSION["build_id"]);
     } else {
-      echo "You have not specified a build.<br>";
+      echo "<br>You have not specified a build.<br>";
     }
   } else {
-    echo "You are not logged in.<br>";
+    echo "<br>You are not logged in.<br>";
   }
 }
 ?>

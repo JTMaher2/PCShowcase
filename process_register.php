@@ -29,20 +29,20 @@ try { // to add token to user record
 
   // do not proceed if email is already registered
   if (is_registered($_POST["email"], $conn)) {
-    echo "That email address is already in use.<br>";
+    echo "<br>That email address is already in use.<br>";
   } else {
     // check for valid password
     if (valid_password()) {
       register_user($conn); // safe to add new record to database
     } else {
-      echo "Password must .<br>
+      echo "<br>Password must .<br>
             <a href='register.html'>Back</a>";
     }
   }
 
   $conn = null;
 } catch(PDOException $e) {
-  echo "Error: " . $e->getMessage();
+  echo "<br>Error: " . $e->getMessage();
 }
 
 echo "</div>";
@@ -58,14 +58,14 @@ function valid_password() {
           preg_match('/\W/', $_POST["password"])) {
         return true;
       } else {
-        echo "Password must contain at least 1 letter, 1 number, and 1
+        echo "<br>Password must contain at least 1 letter, 1 number, and 1
               symbol<br>";
       }
     } else {
-      echo "Password must be between 8 and 64 characters";
+      echo "<br>Password must be between 8 and 64 characters";
     }
   } else {
-    echo "Password and confirmed password do not match";
+    echo "<br>Password and confirmed password do not match";
   }
 
   return false;
@@ -128,7 +128,7 @@ function register_user($conn) {
 
   send_activation_email($conn);
 
-  echo "Please check your inbox for an email that contains instructions on
+  echo "<br>Please check your inbox for an email that contains instructions on
         how to activate your account.<br>";
 }
 

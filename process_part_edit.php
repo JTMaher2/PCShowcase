@@ -29,7 +29,7 @@ try {
 
   $conn = null;
 } catch (PDOException $e) {
-  echo "Error: " . $e->getMessage();
+  echo "<br>Error: " . $e->getMessage();
 }
 
 echo "</div>";
@@ -76,9 +76,9 @@ function update_part($conn) {
                            ":id" => $_GET["part_id"]));
     }
 
-    echo "Part updated<br>";
+    echo "<br>Part updated<br>";
   } else {
-    echo "You do not have permission to edit this part.<br><br>";
+    echo "<br>You do not have permission to edit this part.<br><br>";
   }
 
   echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
