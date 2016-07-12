@@ -23,16 +23,16 @@ $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
 $username = $url["user"];
 $password = $url["pass"];
 
-// try {
-//   $conn = new PDO($dsn, $username, $password);
-//   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//
-//   add_part($conn);
-//
-//   $conn = null;
-// } catch (PDOException $e) {
-//   echo "Error: " . $e->getMessage();
-// }
+try {
+  $conn = new PDO($dsn, $username, $password);
+  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+ // add_part($conn);
+
+  $conn = null;
+} catch (PDOException $e) {
+  echo "Error: " . $e->getMessage();
+}
 
 //
 // // link back to build
