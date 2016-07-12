@@ -19,7 +19,7 @@ $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
 $username = $url["user"];
 $password = $url["pass"];
 
-echo "<div class='container'>";
+echo "<br><br><br><br><div class='container'>";
 
 try {
   $conn = new PDO($dsn, $username, $password);
@@ -76,9 +76,9 @@ function update_part($conn) {
                            ":id" => $_GET["part_id"]));
     }
 
-    echo "<br>Part updated<br>";
+    echo "Part updated<br>";
   } else {
-    echo "<br>You do not have permission to edit this part.<br><br>";
+    echo "You do not have permission to edit this part.<br><br>";
   }
 
   echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
