@@ -60,9 +60,9 @@ require "footer.php";
 
 // store a security token in the users table
 function store_token_in_db($token) {
-  $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+  $url = parse_url(getenv("DATABASE_URL"));
 
-  $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
+  $dsn = "pgsql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
   $username = $url["user"];
   $password = $url["pass"];
 

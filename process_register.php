@@ -15,9 +15,9 @@ require "header.php";
 require "vendor/autoload.php"; # for SendGrid
 
 // pcshowcase DB exists, so select it
-$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+$url = parse_url(getenv("DATABASE_URL"));
 
-$dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
+$dsn = "pgsql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
 $username = $url["user"];
 $password = $url["pass"];
 

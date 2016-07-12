@@ -20,9 +20,9 @@ if (isset($_SESSION["user"])) {
     if ($_SESSION["user"] != 'guest@example.com') {
         // if new username is different from old username
         if ($_GET["new_username"] != $_SESSION["user"]) {
-          $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+          $url = parse_url(getenv("DATABASE_URL"));
 
-          $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
+          $dsn = "pgsql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
           $username = $url["user"];
           $password = $url["pass"];
 
