@@ -38,35 +38,35 @@ try {
 echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
      "' class='btn btn-large btn-primary'>Back</a><br>";
 
-echo "</div>"
+echo "</div>";
 
 require "footer.php";
 
-// try to add part to build
-// function add_part($conn) {
-//   // if user is logged in
-//   if (isset($_SESSION["user"])) {
-//     // if user has specified a build
-//     if (isset($_SESSION["build_id"])) {
-//       $sql = "INSERT INTO parts (build_id, type, manufacturer, name, qty)
-//               VALUES (" . $_SESSION["build_id"] . ", :type, :manufacturer,
-//               :name, :qty)";
-//
-//       $stmt = $conn->prepare($sql,
-//                              array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-//       $stmt->execute(array(":type" => $_GET["part_type"],
-//                            ":manufacturer" => $_GET["part_manufacturer"],
-//                            ":name" => $_GET["part_name"],
-//                            ":qty" => $_GET["part_qty"]));
-//
-//       header("Location: display_build.php?build_id=" . $_SESSION["build_id"]);
-//     } else {
-//       echo "You have not specified a build.<br>";
-//     }
-//   } else {
-//     echo "You are not logged in.<br>";
-//   }
-// }
+try to add part to build
+function add_part($conn) {
+  // if user is logged in
+  if (isset($_SESSION["user"])) {
+    // if user has specified a build
+    if (isset($_SESSION["build_id"])) {
+      $sql = "INSERT INTO parts (build_id, type, manufacturer, name, qty)
+              VALUES (" . $_SESSION["build_id"] . ", :type, :manufacturer,
+              :name, :qty)";
+
+      $stmt = $conn->prepare($sql,
+                             array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+      $stmt->execute(array(":type" => $_GET["part_type"],
+                           ":manufacturer" => $_GET["part_manufacturer"],
+                           ":name" => $_GET["part_name"],
+                           ":qty" => $_GET["part_qty"]));
+
+      header("Location: display_build.php?build_id=" . $_SESSION["build_id"]);
+    } else {
+      echo "You have not specified a build.<br>";
+    }
+  } else {
+    echo "You are not logged in.<br>";
+  }
+}
 ?>
 </body>
 </html>
