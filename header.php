@@ -16,5 +16,5 @@ if (isset($_SESSION["user"])) { // if logged in
         <li><a href='logout.php'>Logout</a></li>";
 }
 
-echo "</ul></nav></div></header>";
+echo "</ul></nav></div></header><br><br><br>";
 ?>

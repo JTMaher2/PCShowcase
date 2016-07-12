@@ -15,7 +15,7 @@ require "header.php";
 
 echo "<div class='container'>";
 
-echo "<br><br><br><h3>New Part</h3>";
+echo "<h3>New Part</h3>";
 
 $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 

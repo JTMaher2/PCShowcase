@@ -13,7 +13,7 @@ session_start();
 
 require "header.php";
 
-echo "<br><br><br><div class='container'>";
+echo "<div class='container'>";
 
 $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
