@@ -54,7 +54,9 @@ if (isset($_SESSION["user"])) {
                     <input type='hidden' name='build_id' value='" . $build["id"] . "'>
                     <input type='submit' value='' class='btn btn-warning form-control'>
                     <i class='glyphicon glyphicon-pencil form-control-feedback'></i>
-                  </form></div></td></tr>";
+                  </form>
+                </div>
+              </td></tr>";
       }
 
       echo "</table><br>";

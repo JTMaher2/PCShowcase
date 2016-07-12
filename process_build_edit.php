@@ -41,13 +41,24 @@ function update_build($conn) {
   // if user is logged in, and is build owner
   if (isset($_SESSION["user"]) && $_SESSION["user"] == get_build_owner($conn)) {
     // if user has specified a build ID and new name
-    if ($_GET["build_id"] != null && $_GET["new_name"] != null) {
-      $sql = "UPDATE builds SET name = :new_name WHERE id = :build_id";
+    if ($_GET["build_id"] != null) {
+      if ($_GET["new_name"] != null) {
+        $sql = "UPDATE builds SET name = :new_name WHERE id = :build_id";
 
-      $stmt = $conn->prepare($sql,
-                             array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-      $stmt->execute(array(":new_name" => $_GET["new_name"],
-                           ":build_id" => $_GET["build_id"]));
+        $stmt = $conn->prepare($sql,
+                               array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $stmt->execute(array(":new_name" => $_GET["new_name"],
+                             ":build_id" => $_GET["build_id"]));
+      }
+
+      if ($_GET["status"] != null) {
+        $sql = "UPDATE builds SET status = :new_status WHERE id = :build_id";
+
+        $stmt = $conn->prepare($sql,
+                               array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $stmt->execute(array(":new_status" => $_GET["status"],
+                             ":build_id" => $_GET["build_id"]));
+      }
 
       header("Location: my_builds.php");
     } else {

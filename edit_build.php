@@ -23,6 +23,8 @@ if (isset($_SESSION["user"]) && $_SESSION["user"] == get_build_owner()) {
           <input type='hidden' name='build_id' value='" . $_GET["build_id"] .
           "'>
           Name: <input type='text' name='new_name'><br>
+          Status: <input type='radio' name='status' value='in_progress' checked> In Progress<br>
+          <input type='radio' name='status' value='completed'> Completed<br>
           <input type='submit' value='Submit' class='btn btn-large btn-primary'>
         </form>";
 } else {
