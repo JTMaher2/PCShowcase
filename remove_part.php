@@ -13,9 +13,7 @@ session_start();
 
 require "header.php";
 
-echo "<div class='container'>";
-
-echo "<h3>Remove Part</h3>";
+echo "<br><br><br><div class='container'>";
 
 $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
@@ -31,16 +29,16 @@ try {
   if (get_build_owner($conn) == $_SESSION["user"]) {
     delete_part($conn);
   } else {
-    echo "<br>You do not have permission to delete this part.<br>";
+    echo "You do not have permission to delete this part.<br>";
   }
 
   $conn = null;
 } catch (PDOException $e) {
-  echo "<br>Error: " . $e->getMessage() . "<br>";
+  echo "Error: " . $e->getMessage() . "<br>";
 }
 
 // link back to build
-echo "<br><a href='display_build.php?build_id=" . $_SESSION["build_id"] .
+echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
      "' class='btn btn-large btn-primary'>Back</a><br>";
 
 echo "</div>";

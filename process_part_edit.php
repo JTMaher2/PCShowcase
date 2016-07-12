@@ -19,7 +19,7 @@ $dsn = "mysql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
 $username = $url["user"];
 $password = $url["pass"];
 
-echo "<br><br><br><br><div class='container'>";
+echo "<br><br><br><div class='container'>";
 
 try {
   $conn = new PDO($dsn, $username, $password);
