@@ -49,7 +49,7 @@ function new_build($conn) {
   $stmt->execute(array(":name" => $_GET["name"],
                        ":email" => $_SESSION["user"]));
 
-  $build_id = $conn->lastInsertId(); // get this build's ID
+  $build_id = $conn->lastInsertId('pcshowcase_builds_seq'); // get this build's ID
 
   header("Location: display_build.php?build_id=" . $build_id); // redirect
 }
