@@ -27,7 +27,7 @@ try {
   $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  //add_part($conn);
+  add_part($conn);
 
   $conn = null;
 } catch (PDOException $e) {
@@ -42,7 +42,7 @@ echo "</div>";
 
 require "footer.php";
 
-try to add part to build
+// try to add part to build
 function add_part($conn) {
   // if user is logged in
   if (isset($_SESSION["user"])) {
