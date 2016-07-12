@@ -27,21 +27,20 @@ try {
   $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
- // add_part($conn);
+  add_part($conn);
 
   $conn = null;
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
 }
 
-//
-// // link back to build
-// echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
-//      "' class='btn btn-large btn-primary'>Back</a><br>";
-//
-// echo "</div>"
-//
-// require "footer.php";
+// link back to build
+echo "<a href='display_build.php?build_id=" . $_SESSION["build_id"] .
+     "' class='btn btn-large btn-primary'>Back</a><br>";
+
+echo "</div>"
+
+require "footer.php";
 
 // try to add part to build
 // function add_part($conn) {
