@@ -27,11 +27,17 @@ try { // to display all builds
   $conn = new PDO($dsn, $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  $sql = "SELECT id, name FROM builds";
+  $sql = "SELECT id, name, status FROM builds";
 
   foreach ($conn->query($sql) as $build) {
     echo "<a href='display_build.php?build_id=" . $build["id"] . "'>" .
-         $build["name"] . "</a><br>";
+         $build["name"];
+
+    if ($build["status"] == "in_progress") {
+      echo " (In Progress)";
+    }
+
+    echo "</a><br>";
   }
 
   $conn = null;

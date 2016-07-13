@@ -28,7 +28,7 @@ if (isset($_SESSION["user"])) {
     $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $sql = "SELECT id, name FROM builds WHERE owner = :user";
+    $sql = "SELECT id, name, status FROM builds WHERE owner = :user";
 
     $stmt = $conn->prepare($sql,
                            array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -40,7 +40,13 @@ if (isset($_SESSION["user"])) {
       // display builds
       while($build = $stmt->fetch()) {
         echo "<tr><td><a href='display_build.php?build_id=" . $build["id"] .
-             "'>" . $build["name"] . "</a></td>
+             "'>" . $build["name"];
+
+        if ($build["status"] == "in_progress") {
+          echo " (In Progress)";
+        }
+
+        echo "</a></td>
               <td>
                 <div class='form-group has-feedback'>
                   <form action='remove_build.php'>

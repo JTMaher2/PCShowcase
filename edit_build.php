@@ -22,11 +22,18 @@ if (isset($_SESSION["user"]) && $_SESSION["user"] == get_build_owner()) {
         <form action='process_build_edit.php'>
           <input type='hidden' name='build_id' value='" . $_GET["build_id"] .
           "'>
-          Name: <input type='text' name='new_name'><br>
-          Status: <input type='radio' name='status' value='in_progress' checked> In Progress<br>
-          <input type='radio' name='status' value='completed'> Completed<br>
-          <input type='submit' value='Submit' class='btn btn-large btn-primary'>
-        </form>";
+          Name: <input type='text' name='new_name'><br>";
+
+  // check the button that corresponds to database value
+  if (get_build_status() == 'in_progress') {
+    echo "Status: <input type='radio' name='status' value='in_progress' checked> In Progress
+                  <input type='radio' name='status' value='completed'> Completed<br>";
+  } else {
+    echo "Status: <input type='radio' name='status' value='in_progress'> In Progress
+                  <input type='radio' name='status' value='completed' checked> Completed<br>";
+  }
+
+  echo "<input type='submit' value='Submit' class='btn btn-large btn-primary'></form>";
 } else {
   echo "You do not have permission to edit this build.<br>";
 }
@@ -34,6 +41,34 @@ if (isset($_SESSION["user"]) && $_SESSION["user"] == get_build_owner()) {
 echo "</div>";
 
 require "footer.php";
+
+// get status of build
+function get_build_status() {
+  $url = parse_url(getenv("DATABASE_URL"));
+
+  $dsn = "pgsql:host=" . $url["host"] . ";dbname=" . substr($url["path"], 1);
+  $username = $url["user"];
+  $password = $url["pass"];
+
+  try {
+    $conn = new PDO($dsn, $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $sql = "SELECT status FROM builds WHERE id = :build_id";
+
+    $stmt = $conn->prepare($sql,
+                           array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    $stmt->execute(array(":build_id" => $_GET["build_id"]));
+
+    $status = $stmt->fetch()["status"];
+
+    $conn = null;
+  } catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+  }
+
+  return $status;
+}
 
 // get owner of a build
 function get_build_owner() {

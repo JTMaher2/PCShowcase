@@ -41,7 +41,7 @@ require "footer.php";
 
 // display a build
 function display_build($conn) {
-  $sql = "SELECT name, owner FROM builds WHERE id = " . $_SESSION["build_id"];
+  $sql = "SELECT name, owner, status FROM builds WHERE id = " . $_SESSION["build_id"];
 
   $stmt = $conn->prepare($sql);
   $stmt->execute();
@@ -49,7 +49,13 @@ function display_build($conn) {
   if ($stmt->rowCount() > 0) { // build exists, so display it
     $build = $stmt->fetch();
 
-    echo "<h3>" . $build["name"] . "</h3>
+    echo "<h3>" . $build["name"];
+
+    if ($build["status"] == "in_progress") {
+      echo " (In Progress)";
+    }
+
+    echo "</h3>
          Created by " . $build["owner"] . "<br>";
 
     display_parts($build["owner"], $conn); // display parts for this build

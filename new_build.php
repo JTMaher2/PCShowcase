@@ -41,7 +41,8 @@ require "footer.php";
 
 // add new record to builds table
 function new_build($conn) {
-  $sql = "INSERT INTO builds (name, owner) VALUES (:name, :email)";
+  $sql = "INSERT INTO builds (name, owner, status) VALUES (:name, :email,
+                                                           'in_progress')";
 
   // make new build
   $stmt = $conn->prepare($sql,

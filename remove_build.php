@@ -84,7 +84,7 @@ function delete_build($conn) {
   $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
   $stmt->execute(array(":email" => $_SESSION["user"]));
 
-  echo "Build deleted successfully<br>";
+  header("Location: my_builds.php");
 }
 ?>
 </body>
