@@ -42,8 +42,8 @@ if (isset($_SESSION["user"])) {
         echo "<tr><td><a href='display_build.php?build_id=" . $build["id"] .
              "'>" . $build["name"];
 
-        if ($build["status"] == "in_progress") {
-          echo " (In Progress)";
+        if ($build["status"] == "incomplete") {
+          echo " (Incomplete)";
         }
 
         echo "</a></td>

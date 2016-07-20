@@ -41,14 +41,15 @@ require "footer.php";
 
 // add new record to builds table
 function new_build($conn) {
-  $sql = "INSERT INTO builds (name, owner, status) VALUES (:name, :email,
-                                                           'in_progress')";
+  $sql = "INSERT INTO builds (name, owner, status, description) VALUES (:name, :email,
+                                                           'incomplete', :description)";
 
   // make new build
   $stmt = $conn->prepare($sql,
                          array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
   $stmt->execute(array(":name" => $_GET["name"],
-                       ":email" => $_SESSION["user"]));
+                       ":email" => $_SESSION["user"],
+                       ":description" => $_GET["description"]));
 
   $build_id = $conn->lastInsertId('builds_id_seq'); // get this build's ID
 

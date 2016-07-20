@@ -25,15 +25,16 @@ if (isset($_SESSION["user"]) && $_SESSION["user"] == get_build_owner()) {
           Name: <input type='text' name='new_name'><br>";
 
   // check the button that corresponds to database value
-  if (get_build_status() == 'in_progress') {
-    echo "Status: <input type='radio' name='status' value='in_progress' checked> In Progress
-                  <input type='radio' name='status' value='completed'> Completed<br>";
+  if (get_build_status() == 'incomplete') {
+    echo "Status: <input type='radio' name='status' value='incomplete' checked> Incomplete
+                  <input type='radio' name='status' value='complete'> Complete<br>";
   } else {
-    echo "Status: <input type='radio' name='status' value='in_progress'> In Progress
-                  <input type='radio' name='status' value='completed' checked> Completed<br>";
+    echo "Status: <input type='radio' name='status' value='incomplete'> Incomplete
+                  <input type='radio' name='status' value='complete' checked> Complete<br>";
   }
 
-  echo "<input type='submit' value='Submit' class='btn btn-large btn-primary'></form>";
+  echo "Description: <textarea name='description' cols='40' rows='5'></textarea>
+        <input type='submit' value='Submit' class='btn btn-large btn-primary'></form>";
 } else {
   echo "You do not have permission to edit this build.<br>";
 }

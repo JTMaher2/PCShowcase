@@ -41,7 +41,7 @@ require "footer.php";
 
 // display a build
 function display_build($conn) {
-  $sql = "SELECT name, owner, status FROM builds WHERE id = " . $_SESSION["build_id"];
+  $sql = "SELECT name, owner, status, description FROM builds WHERE id = " . $_SESSION["build_id"];
 
   $stmt = $conn->prepare($sql);
   $stmt->execute();
@@ -51,8 +51,8 @@ function display_build($conn) {
 
     echo "<h3>" . $build["name"];
 
-    if ($build["status"] == "in_progress") {
-      echo " (In Progress)";
+    if ($build["status"] == "incomplete") {
+      echo " (Incomplete)";
     }
 
     echo "</h3>
@@ -60,7 +60,9 @@ function display_build($conn) {
 
     display_parts($build["owner"], $conn); // display parts for this build
 
-    // if list belongs to current user, allow parts to be added
+    echo "<p>" . $build["description"] . "</p>";
+
+    // if list belongs to current user, allow build to be edited
     if (isset($_SESSION["user"]) && $_SESSION["user"] == $build["owner"]) {
       echo "<br>Add new part:
             <form action='new_part.php'>";

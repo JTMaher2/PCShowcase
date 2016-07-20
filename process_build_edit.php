@@ -60,6 +60,15 @@ function update_build($conn) {
                              ":build_id" => $_GET["build_id"]));
       }
 
+      if ($_GET["description"] != null) {
+        $sql = "UPDATE builds SET description = :new_description WHERE id = :build_id";
+
+        $stmt = $conn->prepare($sql,
+                               array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $stmt->execute(array(":new_description" => $_GET["description"],
+                             ":build_id" => $_GET["build_id"]));
+      }
+
       header("Location: my_builds.php");
     } else {
       echo "Invalid parameters<br>";
